@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { type HTMLInputTypeAttribute, useId } from "react";
+import { type HTMLInputTypeAttribute, useId, forwardRef } from "react";
 
 type InputGroupProps = {
   className?: string;
@@ -17,9 +17,10 @@ type InputGroupProps = {
   iconPosition?: "left" | "right";
   height?: "sm" | "default";
   defaultValue?: string;
+  error?: string;
 };
 
-const InputGroup: React.FC<InputGroupProps> = ({
+const InputGroup = forwardRef<HTMLInputElement, InputGroupProps>(({
   className,
   label,
   type,
@@ -29,8 +30,9 @@ const InputGroup: React.FC<InputGroupProps> = ({
   active,
   handleChange,
   icon,
+  error,
   ...props
-}) => {
+}, ref) => {
   const id = useId();
 
   return (
@@ -53,6 +55,7 @@ const InputGroup: React.FC<InputGroupProps> = ({
       >
         <input
           id={id}
+          ref={ref}
           type={type}
           name={props.name}
           placeholder={placeholder}
@@ -66,6 +69,7 @@ const InputGroup: React.FC<InputGroupProps> = ({
               : "px-5.5 py-3 text-dark placeholder:text-dark-6 dark:text-white",
             props.iconPosition === "left" && "pl-12.5",
             props.height === "sm" && "py-2.5",
+            error && "border-red focus:border-red",
           )}
           required={required}
           disabled={disabled}
@@ -74,9 +78,17 @@ const InputGroup: React.FC<InputGroupProps> = ({
 
         {icon}
       </div>
+
+      {error && (
+        <p className="mt-2 text-sm text-red">
+          {error}
+        </p>
+      )}
     </div>
   );
-};
+});
+
+InputGroup.displayName = "InputGroup";
 
 export default InputGroup;
 

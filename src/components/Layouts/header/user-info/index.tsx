@@ -6,6 +6,7 @@ import {
   DropdownContent,
   DropdownTrigger,
 } from "@/components/ui/dropdown";
+import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,10 +15,11 @@ import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
 
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const USER = {
-    name: "John Smith",
-    email: "johnson@nextadmin.com",
+    name: user?.name || user?.username || "User",
+    email: user?.email || "user@example.com",
     img: "/images/user/user-03.png",
   };
 
@@ -106,7 +108,10 @@ export function UserInfo() {
         <div className="p-2 text-base text-[#4B5563] dark:text-dark-6">
           <button
             className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setIsOpen(false);
+              logout();
+            }}
           >
             <LogOutIcon />
 

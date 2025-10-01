@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 const SwitcherFour = () => {
@@ -20,9 +22,8 @@ const SwitcherFour = () => {
           />
           <div className="block h-8 w-14 rounded-full bg-[#212B36] dark:bg-primary"></div>
           <div
-            className={`absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white transition ${
-              enabled && "!right-1 !translate-x-full"
-            }`}
+            className={`absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white transition ${enabled && "!right-1 !translate-x-full"
+              }`}
           ></div>
         </div>
       </label>

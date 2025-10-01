@@ -416,3 +416,93 @@ export function UploadIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function EyeIcon(props: IconProps) {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      {...props}
+    >
+      <path
+        d="M12.9833 10C12.9833 11.65 11.65 12.9833 10 12.9833C8.35 12.9833 7.01667 11.65 7.01667 10C7.01667 8.35 8.35 7.01667 10 7.01667C11.65 7.01667 12.9833 8.35 12.9833 10Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="transparent"
+      />
+      <path
+        d="M9.99999 16.8916C12.9417 16.8916 15.6833 15.1583 17.5917 12.1583C18.3417 10.9833 18.3417 9.00831 17.5917 7.83331C15.6833 4.83331 12.9417 3.09998 9.99999 3.09998C7.05833 3.09998 4.31666 4.83331 2.40833 7.83331C1.65833 9.00831 1.65833 10.9833 2.40833 12.1583C4.31666 15.1583 7.05833 16.8916 9.99999 16.8916Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="transparent"
+      />
+    </svg>
+  );
+}
+
+export function EyeOffIcon(props: IconProps) {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      {...props}
+    >
+      <path
+        d="M12.1083 7.89166L7.89166 12.1083C7.275 11.4917 6.91666 10.6917 6.91666 9.99999C6.91666 8.34999 8.24999 7.01666 9.99999 7.01666C10.6917 7.01666 11.4917 7.375 12.1083 7.89166Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="transparent"
+      />
+      <path
+        d="M14.8417 4.80833C13.3583 3.70833 11.7 3.09166 10 3.09166C7.05833 3.09166 4.31667 4.825 2.40833 7.825C1.65833 9 1.65833 10.9833 2.40833 12.1583C3.18333 13.3917 4.1 14.4 5.15833 15.1917"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="transparent"
+      />
+      <path
+        d="M6.91667 16.275C7.90833 16.675 8.94167 16.8917 10 16.8917C12.9417 16.8917 15.6833 15.1583 17.5917 12.1583C18.3417 10.9833 18.3417 9.00833 17.5917 7.83333C17.3 7.33333 16.975 6.86667 16.625 6.43333"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="transparent"
+      />
+      <path
+        d="M12.925 10.5833C12.7083 11.7583 11.7583 12.7083 10.5833 12.925"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="transparent"
+      />
+      <path
+        d="M7.89166 12.1083L2.5 17.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="transparent"
+      />
+      <path
+        d="M17.5 2.5L12.1083 7.89166"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="transparent"
+      />
+    </svg>
+  );
+}

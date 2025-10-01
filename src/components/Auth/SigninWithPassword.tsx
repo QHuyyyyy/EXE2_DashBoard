@@ -1,95 +1,103 @@
 "use client";
 import { EmailIcon, PasswordIcon } from "@/assets/icons";
+import { useAuth } from "@/contexts/auth-context";
 import Link from "next/link";
-import React, { useState } from "react";
-import InputGroup from "../FormElements/InputGroup";
+import { useRouter, useSearchParams } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInSchema, type SignInFormData } from "@/lib/validations/auth";
+import toast from "react-hot-toast";
+import {
+    Form,
+    FormField,
+    FormLabel,
+    FormInput,
+    FormError,
+    FormButton
+} from "../ui/form";
+import { PasswordInput } from "../ui/password-input";
 import { Checkbox } from "../FormElements/checkbox";
 
 export default function SigninWithPassword() {
-  const [data, setData] = useState({
-    email: process.env.NEXT_PUBLIC_DEMO_USER_MAIL || "",
-    password: process.env.NEXT_PUBLIC_DEMO_USER_PASS || "",
-    remember: false,
-  });
+    const { login, isLoading } = useAuth();
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData({
-      ...data,
-      [e.target.name]: e.target.value,
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        formState: { errors, isSubmitting }
+    } = useForm<SignInFormData>({
+        resolver: zodResolver(signInSchema),
+        defaultValues: {
+            username: "",
+            password: "",
+            remember: false,
+        },
     });
-  };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    const onSubmit = async (data: SignInFormData) => {
+        try {
+            const success = await login(data.username, data.password);
+            if (success) {
+                const redirectTo = searchParams.get('redirect') || '/';
+                router.push(redirectTo);
+            }
+        } catch (err) {
+            toast.error("An error occurred during login");
+        }
+    };
 
-    // You can remove this code block
-    setLoading(true);
+    return (
+        <Form onSubmit={handleSubmit(onSubmit)}>
+            <FormField>
+                <FormLabel htmlFor="username" required>Username</FormLabel>
+                <FormInput
+                    id="username"
+                    type="text"
+                    placeholder="Enter your username"
+                    icon={<EmailIcon />}
+                    error={!!errors.username}
+                    {...register("username")}
+                />
+                <FormError>{errors.username?.message}</FormError>
+            </FormField>
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  };
+            <FormField>
+                <FormLabel htmlFor="password" required>Password</FormLabel>
+                <PasswordInput
+                    id="password"
+                    placeholder="Enter your password"
+                    icon={<PasswordIcon />}
+                    error={!!errors.password}
+                    {...register("password")}
+                />
+                <FormError>{errors.password?.message}</FormError>
+            </FormField>
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <InputGroup
-        type="email"
-        label="Email"
-        className="mb-4 [&_input]:py-[15px]"
-        placeholder="Enter your email"
-        name="email"
-        handleChange={handleChange}
-        value={data.email}
-        icon={<EmailIcon />}
-      />
+            <div className="flex items-center justify-between gap-2 py-2 font-medium">
+                <Checkbox
+                    label="Remember me"
+                    withIcon="check"
+                    minimal
+                    radius="md"
+                    {...register("remember")}
+                    onChange={(e) => setValue("remember", e.target.checked)}
+                />
 
-      <InputGroup
-        type="password"
-        label="Password"
-        className="mb-5 [&_input]:py-[15px]"
-        placeholder="Enter your password"
-        name="password"
-        handleChange={handleChange}
-        value={data.password}
-        icon={<PasswordIcon />}
-      />
+                <Link
+                    href="/auth/forgot-password"
+                    className="hover:text-primary dark:text-white dark:hover:text-primary"
+                >
+                    Forgot Password?
+                </Link>
+            </div>
 
-      <div className="mb-6 flex items-center justify-between gap-2 py-2 font-medium">
-        <Checkbox
-          label="Remember me"
-          name="remember"
-          withIcon="check"
-          minimal
-          radius="md"
-          onChange={(e) =>
-            setData({
-              ...data,
-              remember: e.target.checked,
-            })
-          }
-        />
-
-        <Link
-          href="/auth/forgot-password"
-          className="hover:text-primary dark:text-white dark:hover:text-primary"
-        >
-          Forgot Password?
-        </Link>
-      </div>
-
-      <div className="mb-4.5">
-        <button
-          type="submit"
-          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90"
-        >
-          Sign In
-          {loading && (
-            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent dark:border-primary dark:border-t-transparent" />
-          )}
-        </button>
-      </div>
-    </form>
-  );
+            <FormButton type="submit" loading={isLoading || isSubmitting}>
+                Sign In
+            </FormButton>
+        </Form>
+    );
 }

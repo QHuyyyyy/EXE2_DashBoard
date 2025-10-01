@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import Link from "next/link";
@@ -8,7 +10,7 @@ const menuItemBaseStyles = cva(
   {
     variants: {
       isActive: {
-        true: "bg-[rgba(87,80,241,0.07)] text-primary hover:bg-[rgba(87,80,241,0.07)] dark:bg-[#FFFFFF1A] dark:text-white",
+        true: "bg-[rgba(212,175,55,0.10)] text-primary hover:bg-[rgba(212,175,55,0.15)] dark:bg-[rgba(212,175,55,0.20)] dark:text-gold-light",
         false:
           "hover:bg-gray-100 hover:text-dark hover:dark:bg-[#FFFFFF1A] hover:dark:text-white",
       },
