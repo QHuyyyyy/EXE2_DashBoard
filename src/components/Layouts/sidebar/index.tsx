@@ -47,7 +47,7 @@ export function Sidebar() {
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 transition-opacity duration-300"
+          className="fixed inset-1 z-40 bg-black/50 transition-opacity duration-300"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -56,7 +56,7 @@ export function Sidebar() {
       <aside
         className={cn(
           "max-w-[290px] overflow-hidden border-r border-gray-200 bg-white transition-[width] duration-200 ease-linear dark:border-gray-800 dark:bg-gray-dark",
-          isMobile ? "fixed bottom-0 top-0 z-50" : "sticky top-0 h-screen",
+          isMobile ? "fixed bottom-0 top-0 z-[60]" : "sticky top-0 h-screen z-[0]",
           isOpen ? "w-full" : "w-0",
         )}
         aria-label="Main navigation"
@@ -116,7 +116,7 @@ export function Sidebar() {
                                 className={cn(
                                   "ml-auto rotate-180 transition-transform duration-200",
                                   expandedItems.includes(item.title) &&
-                                    "rotate-0",
+                                  "rotate-0",
                                 )}
                                 aria-hidden="true"
                               />
@@ -147,7 +147,7 @@ export function Sidebar() {
                               "url" in item
                                 ? item.url + ""
                                 : "/" +
-                                  item.title.toLowerCase().split(" ").join("-");
+                                item.title.toLowerCase().split(" ").join("-");
 
                             return (
                               <MenuItem

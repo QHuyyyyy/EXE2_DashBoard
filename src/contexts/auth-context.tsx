@@ -11,6 +11,7 @@ interface AuthContextType {
     login: (username: string, password: string) => Promise<boolean>;
     logout: () => void;
     isAuthenticated: boolean;
+    isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,7 +29,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (accessToken && userData) {
             try {
                 const parsedUser = JSON.parse(userData);
-                setUser(parsedUser);
+
+                // Check if user is admin when loading from localStorage
+                if (parsedUser.role !== 'admin') {
+                    // Clear localStorage if user is not admin
+                    localStorage.removeItem('access-token');
+                    localStorage.removeItem('refresh-token');
+                    localStorage.removeItem('user-data');
+                    setUser(null);
+                } else {
+                    setUser(parsedUser);
+                }
 
                 // Optionally verify token with backend
                 // authService.getCurrentUser()
@@ -44,11 +55,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 localStorage.removeItem('access-token');
                 localStorage.removeItem('refresh-token');
                 localStorage.removeItem('user-data');
-                document.cookie = 'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
             }
         }
 
-        setIsLoading(false);
+        // Small delay to prevent flash
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 100);
     }, []);
 
     const login = async (username: string, password: string): Promise<boolean> => {
@@ -56,22 +69,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         try {
             const response = await authService.login(username, password);
-
-            if (response.success && response.accessToken && response.user) {
+            console.log('Login response:', response);
+            if (response.success && response.accessToken) {
                 // Store tokens and user data
                 localStorage.setItem('access-token', response.accessToken);
                 if (response.refreshToken) {
                     localStorage.setItem('refresh-token', response.refreshToken);
                 }
-                localStorage.setItem('user-data', JSON.stringify(response.user));
 
-                // Set cookie for middleware
-                document.cookie = `auth-token=${response.accessToken}; path=/; max-age=86400`; // 24 hours
+                // Get user info after successful login
+                try {
+                    const userData = await authService.getCurrentUser();
 
-                setUser(response.user);
-                setIsLoading(false);
+                    // Check if user is admin
+                    if (userData.role !== 'admin') {
+                        toast.error('Access denied. Only admin users are allowed to login.');
+                        setIsLoading(false);
+                        return false;
+                    }
 
-                toast.success(`Welcome back, ${response.user.name || response.user.username}!`);
+                    setUser(userData);
+                    localStorage.setItem('user-data', JSON.stringify(userData));
+                    setIsLoading(false);
+                } catch (userError) {
+                    console.error('Error fetching user data:', userError);
+                    toast.error('Unable to fetch user information');
+                    setIsLoading(false);
+                    return false;
+                }
+
                 return true;
             } else {
                 setIsLoading(false);
@@ -97,11 +123,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             toast.success('Logged out successfully');
         }
 
-        // Clear local storage and cookies regardless of API response
+        // Clear local storage regardless of API response
         localStorage.removeItem('access-token');
         localStorage.removeItem('refresh-token');
         localStorage.removeItem('user-data');
-        document.cookie = 'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
 
         setUser(null);
         router.push('/auth/sign-in');
@@ -112,7 +137,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         login,
         logout,
-        isAuthenticated: !!user
+        isAuthenticated: !!user,
+        isAdmin: user?.role === 'admin'
     };
 
     return (

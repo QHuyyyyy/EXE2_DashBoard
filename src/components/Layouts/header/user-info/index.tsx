@@ -18,9 +18,12 @@ export function UserInfo() {
   const { user, logout } = useAuth();
 
   const USER = {
-    name: user?.name || user?.username || "User",
+    name: user?.fullName || user?.name || user?.username || "User",
     email: user?.email || "user@example.com",
-    img: "/images/user/user-03.png",
+    img: user?.profilePictureURL || "/images/user/user-03.png",
+    username: user?.username || "",
+    role: user?.role || "",
+    isEmailVerified: user?.isEmailVerified || false,
   };
 
   return (
@@ -73,7 +76,18 @@ export function UserInfo() {
               {USER.name}
             </div>
 
-            <div className="leading-none text-gray-6">{USER.email}</div>
+            <div className="leading-none text-gray-6">
+              {USER.email}
+              {USER.isEmailVerified && (
+                <span className="ml-1 text-green-600">✓</span>
+              )}
+            </div>
+
+            {USER.role && (
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {USER.role}
+              </div>
+            )}
           </figcaption>
         </figure>
 
