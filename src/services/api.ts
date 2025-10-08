@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-// Base API URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+// Base API URL - sử dụng proxy để tránh mixed content error
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api/proxy';
 
 // Create axios instance
 const api = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10000,
+    timeout: 30000, // Tăng timeout vì proxy có thể cần thời gian
     headers: {
         'Content-Type': 'application/json',
     },

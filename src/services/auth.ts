@@ -1,4 +1,5 @@
 import api from './api';
+import { handleProxyError } from '@/utils/proxy-utils';
 
 export interface LoginRequest {
     username: string;
@@ -51,7 +52,8 @@ export const authService = {
             return { ...data, success: false };
         } catch (error: any) {
             console.error('Login error:', error);
-            throw new Error(error.response?.data?.message || 'Login failed');
+            const proxyError = handleProxyError(error);
+            throw new Error(proxyError.message);
         }
     },
 
@@ -62,7 +64,8 @@ export const authService = {
             return response.data;
         } catch (error: any) {
             console.error('Get user error:', error);
-            throw new Error(error.response?.data?.message || 'Failed to get user info');
+            const proxyError = handleProxyError(error);
+            throw new Error(proxyError.message);
         }
     },
 
@@ -75,7 +78,8 @@ export const authService = {
             return response.data;
         } catch (error: any) {
             console.error('Refresh token error:', error);
-            throw new Error(error.response?.data?.message || 'Token refresh failed');
+            const proxyError = handleProxyError(error);
+            throw new Error(proxyError.message);
         }
     },
 
