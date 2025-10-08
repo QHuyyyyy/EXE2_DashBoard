@@ -12,7 +12,7 @@ export function PostDetailModal({ post, isOpen, onClose }: PostDetailModalProps)
     if (!isOpen || !post) return null;
 
     const getStatusColor = (status: string) => {
-        switch (status.toLowerCase()) {
+        switch (status?.toLowerCase()) {
             case "123":
             case "active":
             case "published":

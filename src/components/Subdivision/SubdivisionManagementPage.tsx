@@ -1,19 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PostService, Post, PostsResponse, PostsQueryParams } from "@/services/post.service";
+import { SubdivisionService, Subdivision, SubdivisionsResponse, SubdivisionsQueryParams } from "@/services/subdivision.service";
 import { DataTable, TableColumn, PaginationInfo } from "@/components/ui/DataTable";
-import { PostDetailModal } from "@/components/Post/PostDetailModal";
-import { PostEditModal } from "@/components/Post/PostEditModal";
+import { SubdivisionDetailModal } from "../../components/Subdivision/SubdivisionDetailModal";
+import { SubdivisionEditModal } from "../../components/Subdivision/SubdivisionEditModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
-export default function PostManagementPage() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+export default function SubdivisionManagementPage() {
+    const [subdivisions, setSubdivisions] = useState<Subdivision[]>([]);
+    const [selectedSubdivision, setSelectedSubdivision] = useState<Subdivision | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [postToDelete, setPostToDelete] = useState<number | null>(null);
+    const [subdivisionToDelete, setSubdivisionToDelete] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
@@ -23,12 +23,12 @@ export default function PostManagementPage() {
         pageSize: 6
     });
 
-    // Fetch posts from API when component mounts
+    // Fetch subdivisions from API when component mounts
     useEffect(() => {
-        fetchPosts();
+        fetchSubdivisions();
     }, []);
 
-    const fetchPosts = async (params?: PostsQueryParams) => {
+    const fetchSubdivisions = async (params?: SubdivisionsQueryParams) => {
         try {
             setLoading(true);
             setError(null);
@@ -37,123 +37,121 @@ export default function PostManagementPage() {
                 pageSize: 6,
                 ...params
             };
-            const response: PostsResponse = await PostService.getAllPosts(queryParams);
-            setPosts(response.items);
+            const response: SubdivisionsResponse = await SubdivisionService.getAllSubdivisions(queryParams);
+            setSubdivisions(response.items);
             setPaginationInfo({
                 currentPage: response.currentPage,
                 totalPages: response.totalPages,
                 totalItems: response.totalItems,
                 pageSize: 6
             });
-            console.log("Fetched posts:", response);
+            console.log("Fetched subdivisions:", response);
         } catch (err) {
-            setError("Failed to fetch posts. Please try again.");
-            console.error("Error fetching posts:", err);
+            setError("Failed to fetch subdivisions. Please try again.");
+            console.error("Error fetching subdivisions:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    const deletePost = async (id: number) => {
-        setPostToDelete(id);
+    const deleteSubdivision = async (id: number) => {
+        setSubdivisionToDelete(id);
         setIsDeleteModalOpen(true);
     };
 
     const handleConfirmDelete = async () => {
-        if (!postToDelete) return;
+        if (!subdivisionToDelete) return;
 
         try {
-            await PostService.deletePost(postToDelete.toString());
+            await SubdivisionService.deleteSubdivision(subdivisionToDelete.toString());
             // Refresh current page after delete
-            fetchPosts({ page: paginationInfo.currentPage });
+            fetchSubdivisions({ page: paginationInfo.currentPage });
         } catch (err) {
-            setError("Failed to delete post. Please try again.");
-            console.error("Error deleting post:", err);
+            setError("Failed to delete subdivision. Please try again.");
+            console.error("Error deleting subdivision:", err);
         } finally {
-            setPostToDelete(null);
+            setSubdivisionToDelete(null);
         }
     };
 
     const handlePageChange = (page: number) => {
-        fetchPosts({ page });
+        fetchSubdivisions({ page });
     };
 
-    const getStatusColor = (status: string) => {
-        switch (status.toLowerCase()) {
-            case "123":
-            case "active":
-            case "published":
-                return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-            case "draft":
-                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-            case "archived":
-                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
-            default:
+    const getTypeColor = (type: string) => {
+        switch (type?.toLowerCase()) {
+            case "cao tầng":
                 return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+            case "thấp tầng":
+                return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+            case "villa":
+                return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+            case "commercial":
+                return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300";
+            default:
+                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
         }
     };
 
-    const handleViewPost = async (post: Post) => {
-
-        setSelectedPost(post);
+    const handleViewSubdivision = async (subdivision: Subdivision) => {
+        setSelectedSubdivision(subdivision);
         setIsDetailModalOpen(true);
-
     };
 
-    const handleEditPost = (post: Post) => {
-        setSelectedPost(post);
+    const handleEditSubdivision = (subdivision: Subdivision) => {
+        setSelectedSubdivision(subdivision);
         setIsEditModalOpen(true);
     };
 
     const handleEditSuccess = () => {
-        fetchPosts({ page: paginationInfo.currentPage }); // Refresh current page after successful edit
+        fetchSubdivisions({ page: paginationInfo.currentPage }); // Refresh current page after successful edit
     };
 
     // Define table columns
-    const columns: TableColumn<Post>[] = [
+    const columns: TableColumn<Subdivision>[] = [
         {
-            key: "title",
-            title: "Title",
-            width: "min-w-[220px]",
+            key: "name",
+            title: "Subdivision Info",
+            width: "min-w-[200px]",
             render: (value, record) => (
                 <div>
                     <h5 className="font-medium text-black dark:text-white">
-                        {record.title || 'Untitled'}
+                        {record.name || 'N/A'}
                     </h5>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate max-w-[200px]">
-                        {record.description || 'No description'}
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        ID: {record.subdivisionId}
                     </p>
                 </div>
             )
         },
         {
-            key: "postType",
-            title: "Post Type",
-            width: "min-w-[150px]",
-            render: (value) => (
-                <p className="text-black dark:text-white">
-                    {value || 'N/A'}
-                </p>
-            )
-        },
-        {
-            key: "price",
-            title: "Price",
+            key: "type",
+            title: "Type",
             width: "min-w-[120px]",
             render: (value) => (
-                <p className="text-black dark:text-white">
-                    {value ? value.toLocaleString() : '0'} VNĐ
-                </p>
-            )
-        },
-        {
-            key: "status",
-            title: "Status",
-            width: "min-w-[120px]",
-            render: (value) => (
-                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(value)}`}>
+                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getTypeColor(value)}`}>
                     {value || 'Unknown'}
                 </span>
+            )
+        },
+        {
+            key: "description",
+            title: "Description",
+            width: "min-w-[250px]",
+            render: (value) => (
+                <p className="text-black dark:text-white truncate max-w-[250px]" title={value || ''}>
+                    {value || 'No description'}
+                </p>
+            )
+        },
+        {
+            key: "buildingCount",
+            title: "Buildings",
+            width: "min-w-[100px]",
+            render: (value) => (
+                <p className="text-black dark:text-white">
+                    {value || 0}
+                </p>
             )
         },
         {
@@ -173,7 +171,7 @@ export default function PostManagementPage() {
                 <div className="flex items-center space-x-3.5">
                     <button
                         className="hover:text-primary"
-                        onClick={() => handleViewPost(record)}
+                        onClick={() => handleViewSubdivision(record)}
                         title="View"
                     >
                         <svg
@@ -196,7 +194,7 @@ export default function PostManagementPage() {
                     </button>
                     <button
                         className="hover:text-primary"
-                        onClick={() => handleEditPost(record)}
+                        onClick={() => handleEditSubdivision(record)}
                         title="Edit"
                     >
                         <svg
@@ -215,7 +213,7 @@ export default function PostManagementPage() {
                     </button>
                     <button
                         className="hover:text-red-500"
-                        onClick={() => deletePost(record.postId)}
+                        onClick={() => deleteSubdivision(record.subdivisionId)}
                         title="Delete"
                     >
                         <svg
@@ -261,31 +259,31 @@ export default function PostManagementPage() {
         <>
             <DataTable
                 columns={columns}
-                data={posts}
+                data={subdivisions}
                 loading={loading}
                 error={error}
-                title="Post Management"
-                onRefresh={() => fetchPosts({ page: paginationInfo.currentPage })}
-                emptyMessage="No posts found"
+                title="Subdivision Management"
+                onRefresh={() => fetchSubdivisions({ page: paginationInfo.currentPage })}
+                emptyMessage="No subdivisions found"
                 pagination={paginationInfo}
                 onPageChange={handlePageChange}
                 actions={
                     <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
-                        Add New Post
+                        Add New Subdivision
                     </button>
                 }
             />
 
-            {/* Post Detail Modal */}
-            <PostDetailModal
-                post={selectedPost}
+            {/* Subdivision Detail Modal */}
+            <SubdivisionDetailModal
+                subdivision={selectedSubdivision}
                 isOpen={isDetailModalOpen}
                 onClose={() => setIsDetailModalOpen(false)}
             />
 
-            {/* Post Edit Modal */}
-            <PostEditModal
-                post={selectedPost}
+            {/* Subdivision Edit Modal */}
+            <SubdivisionEditModal
+                subdivision={selectedSubdivision}
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSuccess={handleEditSuccess}
@@ -296,11 +294,11 @@ export default function PostManagementPage() {
                 isOpen={isDeleteModalOpen}
                 onClose={() => {
                     setIsDeleteModalOpen(false);
-                    setPostToDelete(null);
+                    setSubdivisionToDelete(null);
                 }}
                 onConfirm={handleConfirmDelete}
-                title="Delete Post"
-                message="Are you sure you want to delete this post? This action cannot be undone."
+                title="Delete Subdivision"
+                message="Are you sure you want to delete this subdivision? This action cannot be undone."
                 confirmText="Delete"
                 cancelText="Cancel"
                 type="danger"

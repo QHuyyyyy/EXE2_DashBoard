@@ -1,19 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PostService, Post, PostsResponse, PostsQueryParams } from "@/services/post.service";
+import { UserService, User, UsersResponse, UsersQueryParams } from "@/services/user.service";
 import { DataTable, TableColumn, PaginationInfo } from "@/components/ui/DataTable";
-import { PostDetailModal } from "@/components/Post/PostDetailModal";
-import { PostEditModal } from "@/components/Post/PostEditModal";
+import { UserDetailModal } from "../../components/User/UserDetailModal";
+import { UserEditModal } from "../../components/User/UserEditModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
-export default function PostManagementPage() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+export default function UserManagementPage() {
+    const [users, setUsers] = useState<User[]>([]);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [postToDelete, setPostToDelete] = useState<number | null>(null);
+    const [userToDelete, setUserToDelete] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
@@ -23,12 +23,12 @@ export default function PostManagementPage() {
         pageSize: 6
     });
 
-    // Fetch posts from API when component mounts
+    // Fetch users from API when component mounts
     useEffect(() => {
-        fetchPosts();
+        fetchUsers();
     }, []);
 
-    const fetchPosts = async (params?: PostsQueryParams) => {
+    const fetchUsers = async (params?: UsersQueryParams) => {
         try {
             setLoading(true);
             setError(null);
@@ -37,113 +37,160 @@ export default function PostManagementPage() {
                 pageSize: 6,
                 ...params
             };
-            const response: PostsResponse = await PostService.getAllPosts(queryParams);
-            setPosts(response.items);
+            const response: UsersResponse = await UserService.getAllUsers(queryParams);
+            setUsers(response.items);
             setPaginationInfo({
                 currentPage: response.currentPage,
                 totalPages: response.totalPages,
                 totalItems: response.totalItems,
                 pageSize: 6
             });
-            console.log("Fetched posts:", response);
+            console.log("Fetched users:", response);
         } catch (err) {
-            setError("Failed to fetch posts. Please try again.");
-            console.error("Error fetching posts:", err);
+            setError("Failed to fetch users. Please try again.");
+            console.error("Error fetching users:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    const deletePost = async (id: number) => {
-        setPostToDelete(id);
+    const deleteUser = async (id: number) => {
+        setUserToDelete(id);
         setIsDeleteModalOpen(true);
     };
 
     const handleConfirmDelete = async () => {
-        if (!postToDelete) return;
+        if (!userToDelete) return;
 
         try {
-            await PostService.deletePost(postToDelete.toString());
+            await UserService.deleteUser(userToDelete.toString());
             // Refresh current page after delete
-            fetchPosts({ page: paginationInfo.currentPage });
+            fetchUsers({ page: paginationInfo.currentPage });
         } catch (err) {
-            setError("Failed to delete post. Please try again.");
-            console.error("Error deleting post:", err);
+            setError("Failed to delete user. Please try again.");
+            console.error("Error deleting user:", err);
         } finally {
-            setPostToDelete(null);
+            setUserToDelete(null);
         }
     };
 
     const handlePageChange = (page: number) => {
-        fetchPosts({ page });
+        fetchUsers({ page });
     };
 
-    const getStatusColor = (status: string) => {
-        switch (status.toLowerCase()) {
-            case "123":
-            case "active":
-            case "published":
-                return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-            case "draft":
-                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-            case "archived":
-                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
-            default:
+    const getRoleColor = (role: string) => {
+        switch (role?.toLowerCase()) {
+            case "admin":
+                return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+            case "manager":
                 return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+            case "user":
+            case "tenant":
+                return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+            case "landlord":
+                return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+            default:
+                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
         }
     };
 
-    const handleViewPost = async (post: Post) => {
-
-        setSelectedPost(post);
-        setIsDetailModalOpen(true);
-
+    const getStatusColor = (status: string) => {
+        switch (status?.toLowerCase()) {
+            case "active":
+                return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+            case "inactive":
+            case "suspended":
+                return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+            case "pending":
+                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+            default:
+                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+        }
     };
 
-    const handleEditPost = (post: Post) => {
-        setSelectedPost(post);
+    const handleViewUser = async (user: User) => {
+        setSelectedUser(user);
+        setIsDetailModalOpen(true);
+    };
+
+    const handleEditUser = (user: User) => {
+        setSelectedUser(user);
         setIsEditModalOpen(true);
     };
 
     const handleEditSuccess = () => {
-        fetchPosts({ page: paginationInfo.currentPage }); // Refresh current page after successful edit
+        fetchUsers({ page: paginationInfo.currentPage }); // Refresh current page after successful edit
     };
 
     // Define table columns
-    const columns: TableColumn<Post>[] = [
+    const columns: TableColumn<User>[] = [
         {
-            key: "title",
-            title: "Title",
-            width: "min-w-[220px]",
+            key: "fullName",
+            title: "User Info",
+            width: "min-w-[200px]",
             render: (value, record) => (
-                <div>
-                    <h5 className="font-medium text-black dark:text-white">
-                        {record.title || 'Untitled'}
-                    </h5>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate max-w-[200px]">
-                        {record.description || 'No description'}
-                    </p>
+                <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                        {record.avatar ? (
+                            <img
+                                src={record.avatar}
+                                alt={record.fullName}
+                                className="h-10 w-10 rounded-full object-cover"
+                            />
+                        ) : (
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                {record.fullName?.charAt(0)?.toUpperCase() || 'U'}
+                            </span>
+                        )}
+                    </div>
+                    <div>
+                        <h5 className="font-medium text-black dark:text-white">
+                            {record.fullName || 'N/A'}
+                        </h5>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            @{record.username}
+                        </p>
+                    </div>
                 </div>
             )
         },
         {
-            key: "postType",
-            title: "Post Type",
-            width: "min-w-[150px]",
-            render: (value) => (
-                <p className="text-black dark:text-white">
-                    {value || 'N/A'}
-                </p>
+            key: "email",
+            title: "Email",
+            width: "min-w-[200px]",
+            render: (value, record) => (
+                <div>
+                    <p className="text-black dark:text-white">
+                        {value}
+                    </p>
+                    <div className="flex items-center mt-1">
+                        {record.isEmailVerified ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                Verified
+                            </span>
+                        ) : (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
+                                <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                Unverified
+                            </span>
+                        )}
+                    </div>
+                </div>
             )
         },
         {
-            key: "price",
-            title: "Price",
+            key: "role",
+            title: "Role",
             width: "min-w-[120px]",
             render: (value) => (
-                <p className="text-black dark:text-white">
-                    {value ? value.toLocaleString() : '0'} VNĐ
-                </p>
+                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getRoleColor(value)}`}>
+                    {value || 'Unknown'}
+                </span>
             )
         },
         {
@@ -173,7 +220,7 @@ export default function PostManagementPage() {
                 <div className="flex items-center space-x-3.5">
                     <button
                         className="hover:text-primary"
-                        onClick={() => handleViewPost(record)}
+                        onClick={() => handleViewUser(record)}
                         title="View"
                     >
                         <svg
@@ -196,7 +243,7 @@ export default function PostManagementPage() {
                     </button>
                     <button
                         className="hover:text-primary"
-                        onClick={() => handleEditPost(record)}
+                        onClick={() => handleEditUser(record)}
                         title="Edit"
                     >
                         <svg
@@ -215,7 +262,7 @@ export default function PostManagementPage() {
                     </button>
                     <button
                         className="hover:text-red-500"
-                        onClick={() => deletePost(record.postId)}
+                        onClick={() => deleteUser(record.userId)}
                         title="Delete"
                     >
                         <svg
@@ -261,31 +308,31 @@ export default function PostManagementPage() {
         <>
             <DataTable
                 columns={columns}
-                data={posts}
+                data={users}
                 loading={loading}
                 error={error}
-                title="Post Management"
-                onRefresh={() => fetchPosts({ page: paginationInfo.currentPage })}
-                emptyMessage="No posts found"
+                title="User Management"
+                onRefresh={() => fetchUsers({ page: paginationInfo.currentPage })}
+                emptyMessage="No users found"
                 pagination={paginationInfo}
                 onPageChange={handlePageChange}
                 actions={
                     <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
-                        Add New Post
+                        Add New User
                     </button>
                 }
             />
 
-            {/* Post Detail Modal */}
-            <PostDetailModal
-                post={selectedPost}
+            {/* User Detail Modal */}
+            <UserDetailModal
+                user={selectedUser}
                 isOpen={isDetailModalOpen}
                 onClose={() => setIsDetailModalOpen(false)}
             />
 
-            {/* Post Edit Modal */}
-            <PostEditModal
-                post={selectedPost}
+            {/* User Edit Modal */}
+            <UserEditModal
+                user={selectedUser}
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSuccess={handleEditSuccess}
@@ -296,11 +343,11 @@ export default function PostManagementPage() {
                 isOpen={isDeleteModalOpen}
                 onClose={() => {
                     setIsDeleteModalOpen(false);
-                    setPostToDelete(null);
+                    setUserToDelete(null);
                 }}
                 onConfirm={handleConfirmDelete}
-                title="Delete Post"
-                message="Are you sure you want to delete this post? This action cannot be undone."
+                title="Delete User"
+                message="Are you sure you want to delete this user? This action cannot be undone."
                 confirmText="Delete"
                 cancelText="Cancel"
                 type="danger"
