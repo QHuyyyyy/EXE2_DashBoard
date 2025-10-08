@@ -1,19 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PostService, Post, PostsResponse, PostsQueryParams } from "@/services/post.service";
+import { ApartmentService, Apartment, ApartmentsResponse, ApartmentsQueryParams } from "@/services/apartment.service";
 import { DataTable, TableColumn, PaginationInfo } from "@/components/ui/DataTable";
-import { PostDetailModal } from "@/components/Post/PostDetailModal";
-import { PostEditModal } from "@/components/Post/PostEditModal";
+import { ApartmentDetailModal } from "../../components/Apartment/ApartmentDetailModal";
+import { ApartmentEditModal } from "../../components/Apartment/ApartmentEditModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
-export default function PostManagementPage() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+export default function ApartmentManagementPage() {
+    const [apartments, setApartments] = useState<Apartment[]>([]);
+    const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [postToDelete, setPostToDelete] = useState<number | null>(null);
+    const [apartmentToDelete, setApartmentToDelete] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>({
@@ -23,12 +23,12 @@ export default function PostManagementPage() {
         pageSize: 6
     });
 
-    // Fetch posts from API when component mounts
+    // Fetch apartments from API when component mounts
     useEffect(() => {
-        fetchPosts();
+        fetchApartments();
     }, []);
 
-    const fetchPosts = async (params?: PostsQueryParams) => {
+    const fetchApartments = async (params?: ApartmentsQueryParams) => {
         try {
             setLoading(true);
             setError(null);
@@ -37,99 +37,101 @@ export default function PostManagementPage() {
                 pageSize: 6,
                 ...params
             };
-            const response: PostsResponse = await PostService.getAllPosts(queryParams);
-            setPosts(response.items);
+            const response: ApartmentsResponse = await ApartmentService.getAllApartments(queryParams);
+            setApartments(response.items);
             setPaginationInfo({
                 currentPage: response.currentPage,
                 totalPages: response.totalPages,
                 totalItems: response.totalItems,
                 pageSize: 6
             });
-            console.log("Fetched posts:", response);
+            console.log("Fetched apartments:", response);
         } catch (err) {
-            setError("Failed to fetch posts. Please try again.");
-            console.error("Error fetching posts:", err);
+            setError("Failed to fetch apartments. Please try again.");
+            console.error("Error fetching apartments:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    const deletePost = async (id: number) => {
-        setPostToDelete(id);
+    const deleteApartment = async (id: number) => {
+        setApartmentToDelete(id);
         setIsDeleteModalOpen(true);
     };
 
     const handleConfirmDelete = async () => {
-        if (!postToDelete) return;
+        if (!apartmentToDelete) return;
 
         try {
-            await PostService.deletePost(postToDelete.toString());
+            await ApartmentService.deleteApartment(apartmentToDelete.toString());
             // Refresh current page after delete
-            fetchPosts({ page: paginationInfo.currentPage });
+            fetchApartments({ page: paginationInfo.currentPage });
         } catch (err) {
-            setError("Failed to delete post. Please try again.");
-            console.error("Error deleting post:", err);
+            setError("Failed to delete apartment. Please try again.");
+            console.error("Error deleting apartment:", err);
         } finally {
-            setPostToDelete(null);
+            setApartmentToDelete(null);
         }
     };
 
     const handlePageChange = (page: number) => {
-        fetchPosts({ page });
+        fetchApartments({ page });
     };
 
     const getStatusColor = (status: string) => {
-        switch (status.toLowerCase()) {
-            case "123":
-            case "active":
-            case "published":
+        switch (status?.toLowerCase()) {
+            case "available":
+            case "vacant":
                 return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-            case "draft":
-                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-            case "archived":
-                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
-            default:
+            case "occupied":
+            case "rented":
                 return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+            case "maintenance":
+            case "under maintenance":
+                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+            case "unavailable":
+            case "reserved":
+                return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+            default:
+                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
         }
     };
 
-    const handleViewPost = async (post: Post) => {
-
-        setSelectedPost(post);
+    const handleViewApartment = async (apartment: Apartment) => {
+        setSelectedApartment(apartment);
         setIsDetailModalOpen(true);
-
     };
 
-    const handleEditPost = (post: Post) => {
-        setSelectedPost(post);
+    const handleEditApartment = (apartment: Apartment) => {
+        setSelectedApartment(apartment);
         setIsEditModalOpen(true);
     };
 
     const handleEditSuccess = () => {
-        fetchPosts({ page: paginationInfo.currentPage }); // Refresh current page after successful edit
+        fetchApartments({ page: paginationInfo.currentPage }); // Refresh current page after successful edit
     };
 
     // Define table columns
-    const columns: TableColumn<Post>[] = [
+    const columns: TableColumn<Apartment>[] = [
         {
-            key: "title",
-            title: "Title",
-            width: "min-w-[220px]",
+            key: "apartmentCode",
+            title: "Apartment Code",
+            width: "min-w-[150px]",
             render: (value, record) => (
                 <div>
                     <h5 className="font-medium text-black dark:text-white">
-                        {record.title || 'Untitled'}
+                        {record.apartmentCode || 'N/A'}
                     </h5>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate max-w-[200px]">
-                        {record.description || 'No description'}
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        Floor {record.floor}
                     </p>
                 </div>
             )
         },
         {
-            key: "postType",
-            title: "Post Type",
-            width: "min-w-[150px]",
+            key: "apartmentType",
+            title: "Type",
+            width: "min-w-[120px]",
             render: (value) => (
                 <p className="text-black dark:text-white">
                     {value || 'N/A'}
@@ -137,12 +139,22 @@ export default function PostManagementPage() {
             )
         },
         {
-            key: "price",
-            title: "Price",
-            width: "min-w-[120px]",
+            key: "area",
+            title: "Area",
+            width: "min-w-[100px]",
             render: (value) => (
                 <p className="text-black dark:text-white">
-                    {value ? value.toLocaleString() : '0'} VNĐ
+                    {value ? `${value} m²` : 'N/A'}
+                </p>
+            )
+        },
+        {
+            key: "numberOfBedrooms",
+            title: "Bedrooms",
+            width: "min-w-[100px]",
+            render: (value) => (
+                <p className="text-black dark:text-white">
+                    {value || 0}
                 </p>
             )
         },
@@ -173,7 +185,7 @@ export default function PostManagementPage() {
                 <div className="flex items-center space-x-3.5">
                     <button
                         className="hover:text-primary"
-                        onClick={() => handleViewPost(record)}
+                        onClick={() => handleViewApartment(record)}
                         title="View"
                     >
                         <svg
@@ -196,7 +208,7 @@ export default function PostManagementPage() {
                     </button>
                     <button
                         className="hover:text-primary"
-                        onClick={() => handleEditPost(record)}
+                        onClick={() => handleEditApartment(record)}
                         title="Edit"
                     >
                         <svg
@@ -215,7 +227,7 @@ export default function PostManagementPage() {
                     </button>
                     <button
                         className="hover:text-red-500"
-                        onClick={() => deletePost(record.postId)}
+                        onClick={() => deleteApartment(record.apartmentId)}
                         title="Delete"
                     >
                         <svg
@@ -261,31 +273,31 @@ export default function PostManagementPage() {
         <>
             <DataTable
                 columns={columns}
-                data={posts}
+                data={apartments}
                 loading={loading}
                 error={error}
-                title="Post Management"
-                onRefresh={() => fetchPosts({ page: paginationInfo.currentPage })}
-                emptyMessage="No posts found"
+                title="Apartment Management"
+                onRefresh={() => fetchApartments({ page: paginationInfo.currentPage })}
+                emptyMessage="No apartments found"
                 pagination={paginationInfo}
                 onPageChange={handlePageChange}
                 actions={
                     <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
-                        Add New Post
+                        Add New Apartment
                     </button>
                 }
             />
 
-            {/* Post Detail Modal */}
-            <PostDetailModal
-                post={selectedPost}
+            {/* Apartment Detail Modal */}
+            <ApartmentDetailModal
+                apartment={selectedApartment}
                 isOpen={isDetailModalOpen}
                 onClose={() => setIsDetailModalOpen(false)}
             />
 
-            {/* Post Edit Modal */}
-            <PostEditModal
-                post={selectedPost}
+            {/* Apartment Edit Modal */}
+            <ApartmentEditModal
+                apartment={selectedApartment}
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSuccess={handleEditSuccess}
@@ -296,11 +308,11 @@ export default function PostManagementPage() {
                 isOpen={isDeleteModalOpen}
                 onClose={() => {
                     setIsDeleteModalOpen(false);
-                    setPostToDelete(null);
+                    setApartmentToDelete(null);
                 }}
                 onConfirm={handleConfirmDelete}
-                title="Delete Post"
-                message="Are you sure you want to delete this post? This action cannot be undone."
+                title="Delete Apartment"
+                message="Are you sure you want to delete this apartment? This action cannot be undone."
                 confirmText="Delete"
                 cancelText="Cancel"
                 type="danger"

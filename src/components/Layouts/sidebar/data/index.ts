@@ -18,6 +18,30 @@ export const NAV_DATA = [
         items: [],
       },
       {
+        title: "Apartment Management",
+        url: "/apartment-management",
+        icon: Icons.ApartmentIcon,
+        items: [],
+      },
+      {
+        title: "Building Management",
+        url: "/building-management",
+        icon: Icons.BuildingIcon,
+        items: [],
+      },
+      {
+        title: "Subdivision Management",
+        url: "/subdivision-management",
+        icon: Icons.SubdivisionIcon,
+        items: [],
+      },
+      {
+        title: "User Management",
+        url: "/user-management",
+        icon: Icons.UsersIcon,
+        items: [],
+      },
+      {
         title: "Calendar",
         url: "/calendar",
         icon: Icons.Calendar,
