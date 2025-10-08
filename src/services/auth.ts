@@ -16,11 +16,19 @@ export interface LoginResponse {
 }
 
 export interface User {
-    id: string;
+    userID: string;
     username: string;
     email: string;
-    name: string;
-    isEmailVerified?: boolean;
+    role: string;
+    fullName: string;
+    phoneNumber: string;
+    profilePictureURL: string | null;
+    bio: string;
+    isEmailVerified: boolean;
+    createdAt: string;
+    // Keep these for backward compatibility
+    id?: string;
+    name?: string;
 }
 
 export const authService = {
@@ -33,19 +41,10 @@ export const authService = {
             });
 
             const data = response.data;
-
-            // If login successful, extract user info from token or make another API call
             if (data.accessToken) {
                 return {
                     ...data,
                     success: true,
-                    user: {
-                        id: username, // Temporary - should get from token or separate API call
-                        username,
-                        email: `${username}@example.com`, // Temporary
-                        name: username,
-                        isEmailVerified: data.isEmailVerified,
-                    },
                 };
             }
 

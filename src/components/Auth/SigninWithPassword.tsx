@@ -40,12 +40,17 @@ export default function SigninWithPassword() {
 
     const onSubmit = async (data: SignInFormData) => {
         try {
+            console.log('Starting login process...');
             const success = await login(data.username, data.password);
-            if (success) {
-                const redirectTo = searchParams.get('redirect') || '/';
-                router.push(redirectTo);
-            }
+            console.log('Login result:', success);
+            // No need to manually redirect here - AuthWrapper will handle it
+            // if (success) {
+            //     const redirectTo = searchParams.get('redirect') || '/';
+            //     console.log('Redirecting to:', redirectTo);
+            //     router.push(redirectTo);
+            // }
         } catch (err) {
+            console.error('Login error:', err);
             toast.error("An error occurred during login");
         }
     };
