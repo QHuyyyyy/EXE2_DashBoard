@@ -92,12 +92,12 @@ export default function SigninWithPassword() {
                     onChange={(e) => setValue("remember", e.target.checked)}
                 />
 
-                <Link
+                {/* <Link
                     href="/auth/forgot-password"
                     className="hover:text-primary dark:text-white dark:hover:text-primary"
                 >
                     Forgot Password?
-                </Link>
+                </Link> */}
             </div>
 
             <FormButton type="submit" loading={isLoading || isSubmitting}>
