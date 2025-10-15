@@ -9,6 +9,7 @@ type Props = {
     features: Feature[]
     highlighted?: boolean
     badge?: string
+    onScrollToDownload?: () => void
 }
 
 const Check = ({ ok = true }: { ok?: boolean }) => (
@@ -29,6 +30,7 @@ export default function PricingCard({
     features,
     highlighted,
     badge,
+    onScrollToDownload,
 }: Props) {
     return (
 
@@ -65,6 +67,7 @@ export default function PricingCard({
                     ? 'bg-[#f7c600] text-black hover:bg-[#e5b700]'
                     : 'border border-[#f7c600] text-[#b8860b] hover:bg-yellow-50'
                     }`}
+                onClick={onScrollToDownload}
             >
                 {cta}
             </button>
