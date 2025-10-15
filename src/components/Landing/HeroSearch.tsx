@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import Select from './ui/Select';
+import { useAuth } from '@/contexts/auth-context';
 
 // Add SpeechRecognition type declarations
 declare global {
@@ -42,6 +43,7 @@ type HeroSearchProps = {
     activeTabDefault?: string
     trending?: string[]
     onSearch?: (params: SearchParams) => void
+    onScrollToDownload?: () => void
 }
 
 // Inline icons
@@ -87,7 +89,9 @@ export default function HeroSearch({
     activeTabDefault = 'Thuê',
     trending = ['S7.02', 'S10.01', 'Masteri', 'Origami', 'Rainbow'],
     onSearch,
+    onScrollToDownload,
 }: HeroSearchProps) {
+    const { user, isAuthenticated, isAdmin, logout } = useAuth()
     const [activeTab, setActiveTab] = useState(
         tabs.includes(activeTabDefault) ? activeTabDefault : tabs[0]
     )
@@ -132,6 +136,9 @@ export default function HeroSearch({
         e?.preventDefault()
         onSearch?.({ location, type, price })
         if (!onSearch) console.log({ location, type, price, activeTab })
+
+        // Scroll to app download section when search is performed
+        onScrollToDownload?.()
     }
 
     const scrollToPricingSection = () => {
@@ -161,9 +168,35 @@ export default function HeroSearch({
                         Danh sách dịch vụ
                         <span className="ml-2 bg-[#f7c600] text-black font-bold rounded-full px-2 py-[2px] text-[12px] border border-[#ffe680]" aria-label="free">FREE</span>
                     </button>
-                    <Link href="/dashboard" className="inline-flex items-center justify-center text-white bg-black/35 border border-white/25 rounded-[10px] px-3 py-2 cursor-pointer" aria-label="Dashboard">
-                        <IconUser />
-                    </Link>
+
+                    {/* User section */}
+                    {isAuthenticated && user ? (
+                        <div className="flex items-center gap-2">
+                            <span className="text-white text-sm font-medium">
+                                {user.fullName || user.name || user.username}
+                            </span>
+                            {isAdmin ? (
+                                <Link href="/dashboard" className="inline-flex items-center justify-center text-white bg-black/35 border border-white/25 rounded-[10px] px-3 py-2 cursor-pointer" aria-label="Dashboard">
+                                    <IconUser />
+                                </Link>
+                            ) : (
+                                <button
+                                    onClick={logout}
+                                    className="inline-flex items-center justify-center text-white bg-red-500/80 border border-red-400/50 rounded-[10px] px-3 py-2 cursor-pointer hover:bg-red-600/80 transition-colors"
+                                    aria-label="Logout"
+                                >
+                                    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+                                        <path fill="currentColor" d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H4v16h10v-2h2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10Z" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
+                    ) : (
+                        <Link href="/auth/sign-in" className="inline-flex items-center justify-center text-white bg-black/35 border border-white/25 rounded-[10px] px-3 py-2 cursor-pointer" aria-label="Sign In">
+                            <IconUser />
+                        </Link>
+                    )}
+
                     <button className="inline-flex items-center justify-center text-white bg-black/35 border border-white/25 rounded-[10px] px-3 py-2 cursor-pointer" aria-label="Mở menu">
                         <IconMenu />
                     </button>

@@ -1,9 +1,14 @@
 import PricingCard from './PricingCard'
 
-export default function PricingSection() {
+type PricingSectionProps = {
+    onScrollToDownload?: () => void
+}
+
+export default function PricingSection({ onScrollToDownload }: PricingSectionProps) {
     return (
-        <section className="max-w-[960px] mx-auto px-5 py-12">
-            <h2 className="text-[20px] md:text-[22px] font-bold mb-6 text-gray-900" data-section="pricing">Các Gói Dịch Vụ</h2>
+        <section className="max-w-[960px] mx-auto px-5 py-12 bg-gradient-to-br">
+            <h2 className="text-[20px] md:text-[22px] font-bold mb-2 text-gray-900" data-section="pricing">Các Gói Dịch Vụ</h2>
+            <div className="border-2 w-20 border-gold rounded-md h-1 bg-gold mb-6"></div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 {/* Row 1 */}
@@ -11,6 +16,7 @@ export default function PricingSection() {
                     title="Gói Cơ Bản"
                     subtitle="Miễn phí"
                     cta="Bắt đầu ngay"
+                    onScrollToDownload={onScrollToDownload}
                     features={[
                         { text: 'Tìm phòng, so sánh giá', available: true },
                         { text: 'Xem thông tin phòng & chủ nhà', available: true },
@@ -29,6 +35,7 @@ export default function PricingSection() {
                     cta="Chọn Gói Nâng Cao"
                     badge="Phổ biến nhất"
                     highlighted
+                    onScrollToDownload={onScrollToDownload}
                     features={[
                         { text: 'Làm nổi bật bài đăng', available: true },
                         { text: 'Tự động làm mới bài đăng', available: true },
@@ -44,6 +51,7 @@ export default function PricingSection() {
                     title="Gói Theo Lượt (Tùy chọn mở rộng)"
                     subtitle="Từ 3.000vnd/lần sử dụng"
                     cta="Dùng Khi Cần"
+                    onScrollToDownload={onScrollToDownload}
                     features={[
                         { text: 'Gợi ý bạn cùng phòng (AI) – đ10.000/lượt', available: true },
                         { text: 'Đẩy tin ưu tiên – đ10.000/ngày', available: true },
@@ -55,6 +63,7 @@ export default function PricingSection() {
                     title="Gói Dịch vụ liên kết đối tác"
                     subtitle="Từ 70.000vnd/lần"
                     cta="Đặt Dịch Vụ Ngay"
+                    onScrollToDownload={onScrollToDownload}
                     features={[
                         { text: 'Vận chuyển – từ đ500.000 trở lên', available: true },
                         { text: 'Vệ sinh – từ đ70.000/giờ', available: true },
@@ -64,6 +73,6 @@ export default function PricingSection() {
                     ]}
                 />
             </div>
-        </section>
+        </section >
     )
 }

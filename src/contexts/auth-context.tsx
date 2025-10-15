@@ -26,30 +26,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const accessToken = localStorage.getItem('access-token');
         const userData = localStorage.getItem('user-data');
 
-        if (accessToken && userData) {
+        if (userData) {
             try {
                 const parsedUser = JSON.parse(userData);
-
-                // Check if user is admin when loading from localStorage
-                if (parsedUser.role !== 'admin') {
-                    // Clear localStorage if user is not admin
-                    localStorage.removeItem('access-token');
-                    localStorage.removeItem('refresh-token');
-                    localStorage.removeItem('user-data');
-                    setUser(null);
-                } else {
-                    setUser(parsedUser);
-                }
-
-                // Optionally verify token with backend
-                // authService.getCurrentUser()
-                //   .then(user => setUser(user))
-                //   .catch(() => {
-                //     localStorage.removeItem('access-token');
-                //     localStorage.removeItem('refresh-token');
-                //     localStorage.removeItem('user-data');
-                //     document.cookie = 'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-                //   });
+                setUser(parsedUser);
             } catch (error) {
                 console.error('Error parsing user data:', error);
                 localStorage.removeItem('access-token');
@@ -71,7 +51,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const response = await authService.login(username, password);
             console.log('Login response:', response);
             if (response.success && response.accessToken) {
-                // Store tokens and user data
                 localStorage.setItem('access-token', response.accessToken);
                 if (response.refreshToken) {
                     localStorage.setItem('refresh-token', response.refreshToken);
@@ -81,15 +60,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 try {
                     const userData = await authService.getCurrentUser();
 
-                    // Check if user is admin
-                    if (userData.role !== 'admin') {
-                        toast.error('Access denied. Only admin users are allowed to login.');
-                        setIsLoading(false);
-                        return false;
-                    }
-
                     setUser(userData);
                     localStorage.setItem('user-data', JSON.stringify(userData));
+
+                    if (userData.role !== 'admin') {
+                        toast.success(`Welcome back, ${userData.fullName || userData.name || userData.username}! You've been redirected to the home page.`);
+                        setIsLoading(false);
+                        return true;
+                    }
+
                     setIsLoading(false);
                 } catch (userError) {
                     console.error('Error fetching user data:', userError);
@@ -113,23 +92,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const logout = async () => {
+        const wasAdmin = user?.role === 'admin';
+
         try {
-            // Call logout API
             await authService.logout();
             toast.success('Logged out successfully');
         } catch (error) {
             console.error('Logout API error:', error);
-            // Still show success message as we're clearing local storage anyway
             toast.success('Logged out successfully');
         }
 
-        // Clear local storage regardless of API response
         localStorage.removeItem('access-token');
         localStorage.removeItem('refresh-token');
         localStorage.removeItem('user-data');
 
         setUser(null);
-        router.push('/auth/sign-in');
+
+        if (wasAdmin) {
+            router.push('/auth/sign-in');
+        }
     };
 
     const value = {

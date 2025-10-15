@@ -1,5 +1,9 @@
 import ListingCard from './ListingCard'
 
+type NewPostsSectionProps = {
+    onScrollToDownload?: () => void
+}
+
 const listings = [
     {
         image: '/1.png',
@@ -39,12 +43,17 @@ const listings = [
     },
 ]
 
-export default function NewPostsSection() {
+export default function NewPostsSection({ onScrollToDownload }: NewPostsSectionProps) {
     return (
         <section className="max-w-[1200px] mx-auto px-5 py-10">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[22px] md:text-[24px] font-bold text-gray-900">Bài đăng mới</h2>
-                <button className="text-sm font-semibold text-gray-700 hover:text-gray-900 cursor-pointer">Xem tất cả</button>
+                <button
+                    className="text-sm font-semibold text-gray-700 hover:text-gray-900 cursor-pointer"
+                    onClick={onScrollToDownload}
+                >
+                    Xem tất cả
+                </button>
             </div>            <div className="grid gap-6 md:gap-7 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 {listings.map((item, i) => (
                     <ListingCard key={i} {...item} />
