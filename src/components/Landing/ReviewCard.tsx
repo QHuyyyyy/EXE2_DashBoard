@@ -39,7 +39,7 @@ export default function ReviewCard({ avatar, name, role, title, content, rating 
 
             {/* Title */}
             <h4 className="text-[14px] md:text-[15px] font-semibold uppercase tracking-[.3px] leading-6 mb-1 text-gray-900">
-                "{title}"
+                &quot;{title}&quot;
             </h4>
 
             {/* Content */}
