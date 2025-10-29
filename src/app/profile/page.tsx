@@ -81,17 +81,33 @@ export default function Page() {
 
       <div className="overflow-hidden rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
         <div className="relative z-20 h-35 md:h-65">
-          <Image
-            src={data?.coverPhoto}
-            alt="profile cover"
-            className="h-full w-full rounded-tl-[10px] rounded-tr-[10px] object-cover object-center"
-            width={970}
-            height={260}
-            style={{
-              width: "auto",
-              height: "auto",
-            }}
-          />
+          {(data?.coverPhoto || "").startsWith("http://") || (data?.coverPhoto || "").startsWith("https://") ? (
+            // Use plain <img> for external URLs which may not be configured in next.config.js
+            // This avoids the next/image host configuration error for unknown hosts.
+            // Note: plain <img> disables Next.js optimization for that image.
+            // For production, consider whitelisting known hosts in next.config.js or proxying images.
+            // Keep responsive behavior similar to the Image component.
+            // eslint-disable-next-line jsx-a11y/img-redundant-alt
+            <img
+              src={data?.coverPhoto}
+              alt="profile cover"
+              className="h-full w-full rounded-tl-[10px] rounded-tr-[10px] object-cover object-center"
+              style={{ width: "auto", height: "auto" }}
+            />
+          ) : (
+            <Image
+              src={data?.coverPhoto}
+              alt="profile cover"
+              className="h-full w-full rounded-tl-[10px] rounded-tr-[10px] object-cover object-center"
+              width={970}
+              height={260}
+              style={{
+                width: "auto",
+                height: "auto",
+              }}
+              unoptimized
+            />
+          )}
           <div className="absolute bottom-1 right-1 z-10 xsm:bottom-4 xsm:right-4">
             <label
               htmlFor="cover"
@@ -117,13 +133,23 @@ export default function Page() {
             <div className="relative drop-shadow-2">
               {data?.profilePhoto && (
                 <>
-                  <Image
-                    src={data?.profilePhoto}
-                    width={160}
-                    height={160}
-                    className="overflow-hidden rounded-full"
-                    alt="profile"
-                  />
+                  {(data?.profilePhoto || "").startsWith("http://") || (data?.profilePhoto || "").startsWith("https://") ? (
+                    <img
+                      src={data?.profilePhoto}
+                      width={160}
+                      height={160}
+                      className="overflow-hidden rounded-full"
+                      alt="profile"
+                    />
+                  ) : (
+                    <Image
+                      src={data?.profilePhoto}
+                      width={160}
+                      height={160}
+                      className="overflow-hidden rounded-full"
+                      alt="profile"
+                    />
+                  )}
 
                   <label
                     htmlFor="profilePhoto"

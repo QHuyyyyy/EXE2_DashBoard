@@ -10,7 +10,7 @@ const nextConfig = {
     },
     // Các cấu hình khác có thể cần
     images: {
-        domains: ['vlivingapi-prod.eba-3t3ifafu.ap-southeast-1.elasticbeanstalk.com'],
+        domains: ['vlivingapi-prod.eba-3t3ifafu.ap-southeast-1.elasticbeanstalk.com',],
     },
 };
 

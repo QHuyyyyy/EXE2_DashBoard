@@ -12,6 +12,16 @@ const api = axios.create({
     },
 });
 
+// Server-side axios instance (no browser-only interceptors). Use this for
+// server-side data fetching where localStorage/window are not available.
+export const serverApi = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 30000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
 // Request interceptor to add auth token
 api.interceptors.request.use(
     (config) => {

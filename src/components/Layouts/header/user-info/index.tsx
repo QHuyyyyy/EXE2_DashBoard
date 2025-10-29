@@ -32,14 +32,25 @@ export function UserInfo() {
         <span className="sr-only">My Account</span>
 
         <figure className="flex items-center gap-3">
-          <Image
-            src={USER.img}
-            className="size-12"
-            alt={`Avatar of ${USER.name}`}
-            role="presentation"
-            width={200}
-            height={200}
-          />
+          {(USER.img || "").startsWith("http://") || (USER.img || "").startsWith("https://") ? (
+            <img
+              src={USER.img}
+              className="size-12"
+              alt={`Avatar of ${USER.name}`}
+              role="presentation"
+              width={40}
+              height={40}
+            />
+          ) : (
+            <Image
+              src={USER.img}
+              className="size-12"
+              alt={`Avatar of ${USER.name}`}
+              role="presentation"
+              width={200}
+              height={200}
+            />
+          )}
           <figcaption className="flex items-center gap-1 font-medium text-dark dark:text-dark-6 max-[1024px]:sr-only">
             <span>{USER.name}</span>
 
@@ -62,14 +73,25 @@ export function UserInfo() {
         <h2 className="sr-only">User information</h2>
 
         <figure className="flex items-center gap-2.5 px-5 py-3.5">
-          <Image
-            src={USER.img}
-            className="size-12"
-            alt={`Avatar for ${USER.name}`}
-            role="presentation"
-            width={200}
-            height={200}
-          />
+          {(USER.img || "").startsWith("http://") || (USER.img || "").startsWith("https://") ? (
+            <img
+              src={USER.img}
+              className="size-12"
+              alt={`Avatar for ${USER.name}`}
+              role="presentation"
+              width={40}
+              height={40}
+            />
+          ) : (
+            <Image
+              src={USER.img}
+              className="size-12"
+              alt={`Avatar for ${USER.name}`}
+              role="presentation"
+              width={200}
+              height={200}
+            />
+          )}
 
           <figcaption className="space-y-1 text-base font-medium">
             <div className="mb-2 leading-none text-dark dark:text-white">

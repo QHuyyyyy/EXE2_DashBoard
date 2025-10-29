@@ -1,11 +1,10 @@
 import { PaymentsOverview } from "@/components/Charts/payments-overview";
+import { TransactionsOverview } from "@/components/Charts/transactions-overview";
 import { UsedDevices } from "@/components/Charts/used-devices";
 import { WeeksProfit } from "@/components/Charts/weeks-profit";
-import { TopChannels } from "@/components/Tables/top-channels";
-import { TopChannelsSkeleton } from "@/components/Tables/top-channels/skeleton";
+// TopChannels removed from dashboard view
 import { createTimeFrameExtractor } from "@/utils/timeframe-extractor";
 import { Suspense } from "react";
-import { ChatsCard } from "./_components/chats-card";
 import { OverviewCardsGroup } from "./_components/overview-cards";
 import { OverviewCardsSkeleton } from "./_components/overview-cards/skeleton";
 import { RegionLabels } from "./_components/region-labels";
@@ -39,19 +38,19 @@ export default async function Home({ searchParams }: PropsType) {
           className="col-span-12 xl:col-span-5"
         />
 
+        <TransactionsOverview
+          className="col-span-12 xl:col-span-7"
+          key={extractTimeFrame("transactions_overview")}
+          timeFrame={extractTimeFrame("transactions_overview")?.split(":")[1]}
+        />
+
         <UsedDevices
           className="col-span-12 xl:col-span-5"
           key={extractTimeFrame("used_devices")}
           timeFrame={extractTimeFrame("used_devices")?.split(":")[1]}
         />
-        <Suspense fallback={null}>
-          <ChatsCard />
-        </Suspense>
-        <div className="col-span-12 grid xl:col-span-12">
-          <Suspense fallback={<TopChannelsSkeleton />}>
-            <TopChannels />
-          </Suspense>
-        </div>
+        {/* Chats card removed */}
+        {/* Top Users removed from dashboard */}
 
 
       </div>

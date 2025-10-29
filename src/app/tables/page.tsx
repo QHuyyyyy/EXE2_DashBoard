@@ -1,7 +1,6 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { InvoiceTable } from "@/components/Tables/invoice-table";
-import { TopChannels } from "@/components/Tables/top-channels";
-import { TopChannelsSkeleton } from "@/components/Tables/top-channels/skeleton";
+// TopChannels removed from project
 import { TopProducts } from "@/components/Tables/top-products";
 import { TopProductsSkeleton } from "@/components/Tables/top-products/skeleton";
 
@@ -18,10 +17,8 @@ const TablesPage = () => {
       <Breadcrumb pageName="Tables" />
 
       <div className="space-y-10">
-        <Suspense fallback={<TopChannelsSkeleton />}>
-          <TopChannels />
-        </Suspense>
-        
+        {/* TopChannels removed */}
+
         <Suspense fallback={<TopProductsSkeleton />}>
           <TopProducts />
         </Suspense>

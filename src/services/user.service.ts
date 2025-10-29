@@ -42,6 +42,8 @@ export interface UpdateUserRequest {
     phoneNumber?: string;
     address?: string;
     dateOfBirth?: string;
+    profilePictureURL?: string | null;
+    bio?: string | null;
     status?: string;
     isEmailVerified?: boolean;
 }
