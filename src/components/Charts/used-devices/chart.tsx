@@ -42,7 +42,7 @@ export function DonutChart({ data }: PropsType) {
             total: {
               show: true,
               showAlways: true,
-              label: "Visitors",
+              label: "Subcriptions",
               fontSize: "16px",
               fontWeight: "400",
             },

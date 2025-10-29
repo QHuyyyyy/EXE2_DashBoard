@@ -12,9 +12,9 @@ type PropsType = { timeFrame?: string; className?: string };
 function normalizeDaily(data: any): { x: string; y: number }[] {
     // Accept array or single object
     if (Array.isArray(data)) {
-        return data.map((d: any) => ({ x: String(d.date ?? d.day ?? ""), y: Number(d.revenue ?? 0) }));
+        return data.map((d: any) => ({ x: String(d.date ?? d.day ?? ""), y: Number(d.daily ?? 0) }));
     }
-    if (data && data.date) return [{ x: String(data.date), y: Number(data.revenue ?? 0) }];
+    if (data && data.date) return [{ x: String(data.date), y: Number(data.daily ?? 0) }];
     return [];
 }
 
@@ -22,10 +22,10 @@ function normalizeMonthly(data: any): { x: string; y: number }[] {
     if (Array.isArray(data)) {
         return data.map((d: any) => {
             const label = d.month && d.year ? `${d.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${d.year ?? ""}-${d.month ?? ""}`;
-            return { x: label, y: Number(d.revenue ?? 0) };
+            return { x: label, y: Number(d.monthly ?? 0) };
         });
     }
-    if (data && data.month && data.year) return [{ x: `${data.year}-${String(data.month).padStart(2, "0")}`, y: Number(data.revenue ?? 0) }];
+    if (data && data.month && data.year) return [{ x: `${data.year}-${String(data.month).padStart(2, "0")}`, y: Number(data.monthly ?? 0) }];
     return [];
 }
 

@@ -1,6 +1,9 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { PeriodPicker } from "@/components/period-picker";
 import { cn } from "@/lib/utils";
-import { getDevicesUsedData } from "@/services/charts.services";
+import api from "@/services/api";
 import { DonutChart } from "./chart";
 
 type PropsType = {
@@ -8,11 +11,48 @@ type PropsType = {
   className?: string;
 };
 
-export async function UsedDevices({
-  timeFrame = "monthly",
-  className,
-}: PropsType) {
-  const data = await getDevicesUsedData(timeFrame);
+export function UsedDevices({ timeFrame = "monthly", className }: PropsType) {
+  const [data, setData] = useState<{ name: string; amount: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function fetchData() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const resp = await api.get(`/Report/subscriptions/total-by-plan`);
+        const payload = resp.data;
+
+        if (Array.isArray(payload)) {
+          const chartData = payload.map((p: any) => ({
+            name: p.name ?? `Plan ${p.planId ?? ""}`,
+            amount: Number(p.total ?? p.amount ?? 0),
+          }));
+
+          if (mounted) setData(chartData);
+        } else {
+          if (mounted) setData([]);
+        }
+      } catch (err: any) {
+        // Log and store a friendly error message
+        // eslint-disable-next-line no-console
+        console.error("Failed to load subscriptions by plan:", err);
+        if (mounted) setError("Unable to load subscription data");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+
+    fetchData();
+
+    return () => {
+      mounted = false;
+    };
+  }, [timeFrame]);
 
   return (
     <div
@@ -30,7 +70,7 @@ export async function UsedDevices({
       </div>
 
       <div className="grid place-items-center">
-        <DonutChart data={data} />
+        {loading ? null : error ? <div className="text-sm text-red-500">{error}</div> : <DonutChart data={data} />}
       </div>
     </div>
   );

@@ -31,11 +31,11 @@ export default function OverviewCardsClient() {
                 ]);
 
                 // Extract known shapes
-                const rev = revRes?.data?.totalRevenue ?? revRes?.data ?? 0;
-                const subs = subRes?.data?.totalSubscriptions ?? subRes?.data ?? 0;
-                const tx = txRes?.data?.completedTransactions ?? txRes?.data ?? 0;
-                const revw = revwRes?.data?.totalReviews ?? revwRes?.data ?? 0;
-                const us = userRes?.data?.totalUsers ?? userRes?.data ?? 0;
+                const rev = revRes?.data?.total ?? revRes?.data ?? 0;
+                const subs = subRes?.data?.total ?? subRes?.data ?? 0;
+                const tx = txRes?.data?.total ?? txRes?.data ?? 0;
+                const revw = revwRes?.data?.total ?? revwRes?.data ?? 0;
+                const us = userRes?.data?.total ?? userRes?.data ?? 0;
 
                 console.log("OverviewCardsClient fetched", { rev, subs, tx, revw, us });
 

@@ -9,14 +9,14 @@ import { OverviewCardsSkeleton } from "@/app/dashboard/_components/overview-card
 type PropsType = { timeFrame?: string; className?: string };
 
 function normalizeDaily(data: any) {
-    if (Array.isArray(data)) return data.map((d: any) => ({ x: d.date ?? d.day ?? "", y: Number(d.reviews ?? 0) }));
-    if (data && data.date) return [{ x: data.date, y: Number(data.reviews ?? 0) }];
+    if (Array.isArray(data)) return data.map((d: any) => ({ x: d.date ?? d.day ?? "", y: Number(d.daily ?? 0) }));
+    if (data && data.date) return [{ x: data.date, y: Number(data.daily ?? 0) }];
     return [];
 }
 
 function normalizeMonthly(data: any) {
-    if (Array.isArray(data)) return data.map((d: any) => ({ x: `${d.year ?? ""}-${String(d.month ?? "").padStart(2, "0")}`, y: Number(d.reviews ?? 0) }));
-    if (data && data.month && data.year) return [{ x: `${data.year}-${String(data.month).padStart(2, "0")}`, y: Number(data.reviews ?? 0) }];
+    if (Array.isArray(data)) return data.map((d: any) => ({ x: `${d.year ?? ""}-${String(d.month ?? "").padStart(2, "0")}`, y: Number(d.monthly ?? 0) }));
+    if (data && data.month && data.year) return [{ x: `${data.year}-${String(data.month).padStart(2, "0")}`, y: Number(data.monthly ?? 0) }];
     return [];
 }
 

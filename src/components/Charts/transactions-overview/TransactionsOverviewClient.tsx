@@ -10,9 +10,9 @@ type PropsType = { timeFrame?: string; className?: string };
 
 function normalizeDaily(data: any): { x: string; y: number }[] {
     if (Array.isArray(data)) {
-        return data.map((d: any) => ({ x: String(d.date ?? d.day ?? ""), y: Number(d.transactions ?? d.count ?? d.value ?? 0) }));
+        return data.map((d: any) => ({ x: String(d.date ?? d.day ?? ""), y: Number(d.daily ?? d.count ?? d.value ?? 0) }));
     }
-    if (data && (data.date || data.day)) return [{ x: String(data.date ?? data.day ?? ""), y: Number(data.transactions ?? data.count ?? data.value ?? 0) }];
+    if (data && (data.date || data.day)) return [{ x: String(data.date ?? data.day ?? ""), y: Number(data.daily ?? data.count ?? data.value ?? 0) }];
     return [];
 }
 
@@ -20,10 +20,10 @@ function normalizeMonthly(data: any): { x: string; y: number }[] {
     if (Array.isArray(data)) {
         return data.map((d: any) => {
             const label = d.month && d.year ? `${d.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${d.year ?? ""}-${d.month ?? ""}`;
-            return { x: label, y: Number(d.transactions ?? d.count ?? d.value ?? 0) };
+            return { x: label, y: Number(d.monthly ?? d.count ?? d.value ?? 0) };
         });
     }
-    if (data && data.month && data.year) return [{ x: `${data.year}-${String(data.month).padStart(2, "0")}`, y: Number(data.transactions ?? data.count ?? data.value ?? 0) }];
+    if (data && data.month && data.year) return [{ x: `${data.year}-${String(data.month).padStart(2, "0")}`, y: Number(data.monthly ?? data.count ?? data.value ?? 0) }];
     return [];
 }
 
