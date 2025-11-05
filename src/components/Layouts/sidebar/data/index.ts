@@ -58,12 +58,12 @@ export const NAV_DATA: NavSection[] = [
         icon: Icons.UsersIcon,
         items: [],
       },
-      {
-        title: "Calendar",
-        url: "/calendar",
-        icon: Icons.Calendar,
-        items: [],
-      },
+      // {
+      //   title: "Calendar",
+      //   url: "/calendar",
+      //   icon: Icons.Calendar,
+      //   items: [],
+      // },
       {
         title: "Profile",
         url: "/profile",

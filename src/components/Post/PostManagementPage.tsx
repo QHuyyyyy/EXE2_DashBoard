@@ -172,7 +172,7 @@ export default function PostManagementPage() {
             render: (_, record) => (
                 <div className="flex items-center space-x-3.5">
                     <button
-                        className="hover:text-primary"
+                        className="hover:text-primary ml-5"
                         onClick={() => handleViewPost(record)}
                         title="View"
                     >
@@ -194,7 +194,7 @@ export default function PostManagementPage() {
                             />
                         </svg>
                     </button>
-                    <button
+                    {/* <button
                         className="hover:text-primary"
                         onClick={() => handleEditPost(record)}
                         title="Edit"
@@ -212,8 +212,8 @@ export default function PostManagementPage() {
                                 fill=""
                             />
                         </svg>
-                    </button>
-                    <button
+                    </button> */}
+                    {/* <button
                         className="hover:text-red-500"
                         onClick={() => deletePost(record.postId)}
                         title="Delete"
@@ -251,7 +251,7 @@ export default function PostManagementPage() {
                                 fill=""
                             />
                         </svg>
-                    </button>
+                    </button> */}
                 </div>
             )
         }
@@ -269,11 +269,7 @@ export default function PostManagementPage() {
                 emptyMessage="No posts found"
                 pagination={paginationInfo}
                 onPageChange={handlePageChange}
-                actions={
-                    <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
-                        Add New Post
-                    </button>
-                }
+
             />
 
             {/* Post Detail Modal */}

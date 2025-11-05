@@ -9,9 +9,11 @@ type PropsType = {
     growthRate: number;
   };
   Icon: (props: SVGProps<SVGSVGElement>) => JSX.Element;
+  /** When false, hide the percent growth UI */
+  showGrowth?: boolean;
 };
 
-export function OverviewCard({ label, data, Icon }: PropsType) {
+export function OverviewCard({ label, data, Icon, showGrowth = true }: PropsType) {
   const isDecreasing = data.growthRate < 0;
 
   return (
@@ -27,26 +29,30 @@ export function OverviewCard({ label, data, Icon }: PropsType) {
           <dd className="text-sm font-medium text-dark-6">{label}</dd>
         </dl>
 
-        <dl
-          className={cn(
-            "text-sm font-medium",
-            isDecreasing ? "text-red" : "text-green",
-          )}
-        >
-          <dt className="flex items-center gap-1.5">
-            {data.growthRate}%
-            {isDecreasing ? (
-              <ArrowDownIcon aria-hidden />
-            ) : (
-              <ArrowUpIcon aria-hidden />
+        {/** optional growth display */}
+        {/** showGrowth default is true when omitted */}
+        {showGrowth && (
+          <dl
+            className={cn(
+              "text-sm font-medium",
+              isDecreasing ? "text-red" : "text-green",
             )}
-          </dt>
+          >
+            <dt className="flex items-center gap-1.5">
+              {data.growthRate}%
+              {isDecreasing ? (
+                <ArrowDownIcon aria-hidden />
+              ) : (
+                <ArrowUpIcon aria-hidden />
+              )}
+            </dt>
 
-          <dd className="sr-only">
-            {label} {isDecreasing ? "Decreased" : "Increased"} by{" "}
-            {data.growthRate}%
-          </dd>
-        </dl>
+            <dd className="sr-only">
+              {label} {isDecreasing ? "Decreased" : "Increased"} by{" "}
+              {data.growthRate}%
+            </dd>
+          </dl>
+        )}
       </div>
     </div>
   );

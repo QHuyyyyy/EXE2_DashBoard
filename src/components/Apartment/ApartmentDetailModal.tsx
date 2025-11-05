@@ -111,10 +111,10 @@ export function ApartmentDetailModal({ apartment, isOpen, onClose }: ApartmentDe
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Number of Bedrooms
+                                    Number of Bathrooms
                                 </label>
                                 <p className="text-black dark:text-white">
-                                    {apartment.numberOfBedrooms}
+                                    {apartment.numberBathroom}
                                 </p>
                             </div>
 

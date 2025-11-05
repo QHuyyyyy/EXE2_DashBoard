@@ -5,6 +5,7 @@ import { BuildingService, Building, BuildingsResponse, BuildingsQueryParams } fr
 import { DataTable, TableColumn, PaginationInfo } from "@/components/ui/DataTable";
 import { BuildingDetailModal } from "../../components/Building/BuildingDetailModal";
 import { BuildingEditModal } from "../../components/Building/BuildingEditModal";
+import BuildingCreateModal from "./buildingcreatemodal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 export default function BuildingManagementPage() {
@@ -12,6 +13,7 @@ export default function BuildingManagementPage() {
     const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [buildingToDelete, setBuildingToDelete] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
@@ -253,7 +255,7 @@ export default function BuildingManagementPage() {
                 pagination={paginationInfo}
                 onPageChange={handlePageChange}
                 actions={
-                    <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
+                    <button onClick={() => setIsCreateModalOpen(true)} className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
                         Add New Building
                     </button>
                 }
@@ -272,6 +274,12 @@ export default function BuildingManagementPage() {
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSuccess={handleEditSuccess}
+            />
+
+            <BuildingCreateModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreated={() => fetchBuildings({ page: paginationInfo.currentPage })}
             />
 
             {/* Delete Confirmation Modal */}

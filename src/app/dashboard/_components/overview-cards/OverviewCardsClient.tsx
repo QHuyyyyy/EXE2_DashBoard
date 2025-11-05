@@ -67,24 +67,28 @@ export default function OverviewCardsClient() {
                 label="Total Revenues"
                 data={{ ...revenue, value: formatVND(revenue.value) }}
                 Icon={icons.Views}
+                showGrowth={false}
             />
 
             <OverviewCard
                 label="Total Subscriptions"
                 data={{ ...subcriptions, value: compactFormat(subcriptions.value) }}
-                Icon={icons.Profit}
+                Icon={icons.Product}
+                showGrowth={false}
             />
 
             <OverviewCard
                 label="Total Transactions"
                 data={{ ...transactions, value: compactFormat(transactions.value) }}
-                Icon={icons.Product}
+                Icon={icons.Profit}
+                showGrowth={false}
             />
 
             <OverviewCard
                 label="Total Reviews"
                 data={{ ...reviews, value: compactFormat(reviews.value) }}
                 Icon={icons.Users}
+                showGrowth={false}
             />
         </div>
     );

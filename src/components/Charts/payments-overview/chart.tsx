@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 type PropsType = {
   data: {
     received: { x: unknown; y: number }[];
-    due: { x: unknown; y: number }[];
+    due?: { x: unknown; y: number }[];
   };
 };
 
@@ -22,7 +22,8 @@ export function PaymentsOverviewChart({ data }: PropsType) {
     legend: {
       show: false,
     },
-    colors: ["#5750F1", "#0ABEF9"],
+    // Received series color set to gold
+    colors: ["#D4AF37"],
     chart: {
       height: 310,
       type: "area",
@@ -89,16 +90,7 @@ export function PaymentsOverviewChart({ data }: PropsType) {
     <div className="-ml-4 -mr-5 h-[310px]">
       <Chart
         options={options}
-        series={[
-          {
-            name: "Received",
-            data: data.received,
-          },
-          {
-            name: "Due",
-            data: data.due,
-          },
-        ]}
+        series={[{ name: "Received", data: data.received }]}
         type="area"
         height={310}
       />

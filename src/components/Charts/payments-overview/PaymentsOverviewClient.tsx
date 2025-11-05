@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { standardFormat, formatVND } from "@/lib/format-number";
+import dayjs from "dayjs";
 import api from "@/services/api";
 import { PaymentsOverviewChart } from "./chart";
 import { OverviewCardsSkeleton } from "@/app/dashboard/_components/overview-cards/skeleton";
@@ -11,26 +12,61 @@ type PropsType = { timeFrame?: string; className?: string };
 
 function normalizeDaily(data: any): { x: string; y: number }[] {
     // Accept array or single object
-    if (Array.isArray(data)) {
-        return data.map((d: any) => ({ x: String(d.date ?? d.day ?? ""), y: Number(d.daily ?? 0) }));
-    }
-    if (data && data.date) return [{ x: String(data.date), y: Number(data.daily ?? 0) }];
-    return [];
+    // New API may return either:
+    // - an array of daily items: [{ date, revenue }, ...]
+    // - an object with a `daily` array: { year, monthly, daily: [{ date, revenue }, ...] }
+    // - a single object with date/revenue
+    let items: any[] = [];
+    if (!data) return [];
+
+    if (Array.isArray(data)) items = data;
+    else if (Array.isArray(data.daily)) items = data.daily;
+    else if (data && data.date) items = [data];
+
+    return items.map((d: any) => {
+        const raw = d.date ?? d.day ?? "";
+        // show day-only label for x-axis: DD if possible, otherwise fallback to raw
+        let label = String(raw);
+        try {
+            if (raw) label = dayjs(String(raw)).isValid() ? dayjs(String(raw)).format("DD") : String(raw);
+        } catch (e) {
+            label = String(raw);
+        }
+        return { x: label, y: Number(d.revenue ?? d.daily ?? 0) };
+    });
 }
 
 function normalizeMonthly(data: any): { x: string; y: number }[] {
+    // If the API returned an array (already list of months)
     if (Array.isArray(data)) {
         return data.map((d: any) => {
-            const label = d.month && d.year ? `${d.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${d.year ?? ""}-${d.month ?? ""}`;
-            return { x: label, y: Number(d.monthly ?? 0) };
+            const label = d.monthName ?? (d.month && d.year ? `${d.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${d.year ?? ""}-${d.month ?? ""}`);
+            return { x: label, y: Number(d.revenue ?? d.monthly ?? 0) };
         });
     }
-    if (data && data.month && data.year) return [{ x: `${data.year}-${String(data.month).padStart(2, "0")}`, y: Number(data.monthly ?? 0) }];
+
+    // If the API returned an object with a `monthly` array
+    if (data && Array.isArray(data.monthly)) {
+        return data.monthly.map((d: any) => {
+            const label = d.monthName ?? (d.month && data.year ? `${data.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${data.year ?? ""}-${d.month ?? ""}`);
+            return { x: label, y: Number(d.revenue ?? d.monthly ?? 0) };
+        });
+    }
+
+    // single-month object
+    if (data && data.month && data.year) {
+        const label = data.monthName ?? `${data.year}-${String(data.month).padStart(2, "0")}`;
+        return [{ x: label, y: Number(data.revenue ?? data.monthly ?? 0) }];
+    }
     return [];
 }
 
 export default function PaymentsOverviewClient({ timeFrame = "monthly", className }: PropsType) {
     const [mode, setMode] = useState<"daily" | "monthly">(timeFrame === "daily" ? "daily" : "monthly");
+    // optional month selector (empty = not sent)
+    const now = new Date();
+    const [month, setMonth] = useState<string>(String(now.getMonth() + 1)); // default to current month
+    const [year, setYear] = useState<number>(now.getFullYear());
     const [loading, setLoading] = useState(true);
     const [received, setReceived] = useState<{ x: string; y: number }[]>([]);
     const [due, setDue] = useState<{ x: string; y: number }[]>([]);
@@ -42,7 +78,17 @@ export default function PaymentsOverviewClient({ timeFrame = "monthly", classNam
             setLoading(true);
             try {
                 const endpoint = mode === "daily" ? "/Report/revenue/daily" : "/Report/revenue/monthly";
-                const res = await api.get(endpoint);
+
+                // build params: for daily include month/year (month optional). For monthly include only year.
+                const params: any = {};
+                if (mode === "daily") {
+                    if (month) params.month = Number(month);
+                    if (year) params.year = year;
+                } else {
+                    if (year) params.year = year;
+                }
+
+                const res = await api.get(endpoint, { params: Object.keys(params).length ? params : undefined });
                 const data = res?.data;
 
                 console.log("PaymentsOverviewClient fetched", mode, data);
@@ -68,7 +114,7 @@ export default function PaymentsOverviewClient({ timeFrame = "monthly", classNam
         return () => {
             mounted = false;
         };
-    }, [mode]);
+    }, [mode, month, year]);
 
     if (loading) return <OverviewCardsSkeleton />;
 
@@ -95,20 +141,49 @@ export default function PaymentsOverviewClient({ timeFrame = "monthly", classNam
                     >
                         Monthly
                     </button>
+                    <div className="flex items-center gap-2 ml-3">
+                        {mode === "daily" && (
+                            <>
+                                <label className="text-sm">Month:</label>
+                                <select
+                                    value={month}
+                                    onChange={(e) => setMonth(e.target.value)}
+                                    className="rounded border px-2 py-1 text-sm"
+                                >
+                                    <option value="">All</option>
+                                    <option value="1">Jan</option>
+                                    <option value="2">Feb</option>
+                                    <option value="3">Mar</option>
+                                    <option value="4">Apr</option>
+                                    <option value="5">May</option>
+                                    <option value="6">Jun</option>
+                                    <option value="7">Jul</option>
+                                    <option value="8">Aug</option>
+                                    <option value="9">Sep</option>
+                                    <option value="10">Oct</option>
+                                    <option value="11">Nov</option>
+                                    <option value="12">Dec</option>
+                                </select>
+                            </>
+                        )}
+
+                        <label className="text-sm">Year:</label>
+                        <input
+                            type="number"
+                            value={year}
+                            onChange={(e) => setYear(Number(e.target.value || now.getFullYear()))}
+                            className="w-20 rounded border px-2 py-1 text-sm"
+                        />
+                    </div>
                 </div>
             </div>
 
             <PaymentsOverviewChart data={{ received, due }} />
 
-            <dl className="grid divide-stroke text-center dark:divide-dark-3 sm:grid-cols-2 sm:divide-x [&>div]:flex [&>div]:flex-col-reverse [&>div]:gap-1">
+            <dl className="grid divide-stroke text-center dark:divide-dark-3 [&>div]:flex [&>div]:flex-col-reverse [&>div]:gap-1">
                 <div className="dark:border-dark-3 max-sm:mb-3 max-sm:border-b max-sm:pb-3">
                     <dt className="text-xl font-bold text-dark dark:text-white">{formatVND(received.reduce((acc, { y }) => acc + y, 0))}</dt>
                     <dd className="font-medium dark:text-dark-6">Received Amount</dd>
-                </div>
-
-                <div>
-                    <dt className="text-xl font-bold text-dark dark:text-white">{formatVND(due.reduce((acc, { y }) => acc + y, 0))}</dt>
-                    <dd className="font-medium dark:text-dark-6">Due Amount</dd>
                 </div>
             </dl>
         </div>

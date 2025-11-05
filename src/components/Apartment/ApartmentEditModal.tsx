@@ -24,7 +24,7 @@ export function ApartmentEditModal({ apartment, isOpen, onClose, onSuccess }: Ap
                 area: apartment.area,
                 apartmentType: apartment.apartmentType,
                 status: apartment.status,
-                numberOfBedrooms: apartment.numberOfBedrooms,
+                numberBathroom: apartment.numberBathroom,
             });
         }
     }, [apartment]);
@@ -52,7 +52,7 @@ export function ApartmentEditModal({ apartment, isOpen, onClose, onSuccess }: Ap
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === 'buildingId' || name === 'floor' || name === 'area' || name === 'numberOfBedrooms'
+            [name]: name === 'buildingId' || name === 'floor' || name === 'area' || name === 'numberBathroom'
                 ? parseInt(value) || 0
                 : value
         }));
@@ -175,14 +175,14 @@ export function ApartmentEditModal({ apartment, isOpen, onClose, onSuccess }: Ap
 
                             <div>
                                 <label className="mb-2.5 block text-black dark:text-white">
-                                    Number of Bedrooms <span className="text-meta-1">*</span>
+                                    Number of BathRoom <span className="text-meta-1">*</span>
                                 </label>
                                 <input
                                     type="number"
-                                    name="numberOfBedrooms"
-                                    value={formData.numberOfBedrooms || ''}
+                                    name="numberBathroom"
+                                    value={formData.numberBathroom || ''}
                                     onChange={handleChange}
-                                    placeholder="Enter number of bedrooms"
+                                    placeholder="Enter number of bathrooms"
                                     min="0"
                                     max="10"
                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"

@@ -23,6 +23,7 @@ export interface CreateBuildingRequest {
     name: string;
     blockCode: string;
     description?: string;
+    maxFloor?: number;
 }
 
 export interface UpdateBuildingRequest {

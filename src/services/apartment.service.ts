@@ -8,7 +8,7 @@ export interface Apartment {
     area: number;
     apartmentType: string;
     status: string;
-    numberOfBedrooms: number;
+    numberBathroom: number;
     createdAt: string;
     postIds?: number[];
 }
@@ -27,7 +27,7 @@ export interface CreateApartmentRequest {
     area: number;
     apartmentType: string;
     status: string;
-    numberOfBedrooms: number;
+    numberBathroom: number;
 }
 
 export interface UpdateApartmentRequest {
@@ -37,7 +37,7 @@ export interface UpdateApartmentRequest {
     area?: number;
     apartmentType?: string;
     status?: string;
-    numberOfBedrooms?: number;
+    numberBathroom?: number;
 }
 
 export interface ApartmentsQueryParams {

@@ -5,6 +5,7 @@ import { ApartmentService, Apartment, ApartmentsResponse, ApartmentsQueryParams 
 import { DataTable, TableColumn, PaginationInfo } from "@/components/ui/DataTable";
 import { ApartmentDetailModal } from "../../components/Apartment/ApartmentDetailModal";
 import { ApartmentEditModal } from "../../components/Apartment/ApartmentEditModal";
+import { ApartmentCreateModal } from "../../components/Apartment/ApartmentCreateModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 export default function ApartmentManagementPage() {
@@ -12,6 +13,7 @@ export default function ApartmentManagementPage() {
     const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [apartmentToDelete, setApartmentToDelete] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
@@ -149,8 +151,8 @@ export default function ApartmentManagementPage() {
             )
         },
         {
-            key: "numberOfBedrooms",
-            title: "Bedrooms",
+            key: "numberBathroom",
+            title: "Bathrooms",
             width: "min-w-[100px]",
             render: (value) => (
                 <p className="text-black dark:text-white">
@@ -182,7 +184,7 @@ export default function ApartmentManagementPage() {
             key: "actions",
             title: "Actions",
             render: (_, record) => (
-                <div className="flex items-center space-x-3.5">
+                <div className="flex items-center space-x-3.5 ml-5">
                     <button
                         className="hover:text-primary"
                         onClick={() => handleViewApartment(record)}
@@ -206,7 +208,7 @@ export default function ApartmentManagementPage() {
                             />
                         </svg>
                     </button>
-                    <button
+                    {/* <button
                         className="hover:text-primary"
                         onClick={() => handleEditApartment(record)}
                         title="Edit"
@@ -224,8 +226,8 @@ export default function ApartmentManagementPage() {
                                 fill=""
                             />
                         </svg>
-                    </button>
-                    <button
+                    </button> */}
+                    {/* <button
                         className="hover:text-red-500"
                         onClick={() => deleteApartment(record.apartmentId)}
                         title="Delete"
@@ -263,7 +265,7 @@ export default function ApartmentManagementPage() {
                                 fill=""
                             />
                         </svg>
-                    </button>
+                    </button> */}
                 </div>
             )
         }
@@ -281,11 +283,6 @@ export default function ApartmentManagementPage() {
                 emptyMessage="No apartments found"
                 pagination={paginationInfo}
                 onPageChange={handlePageChange}
-                actions={
-                    <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
-                        Add New Apartment
-                    </button>
-                }
             />
 
             {/* Apartment Detail Modal */}
@@ -301,6 +298,13 @@ export default function ApartmentManagementPage() {
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSuccess={handleEditSuccess}
+            />
+
+            {/* Apartment Create Modal */}
+            <ApartmentCreateModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSuccess={() => fetchApartments({ page: paginationInfo.currentPage })}
             />
 
             {/* Delete Confirmation Modal */}

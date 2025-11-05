@@ -28,7 +28,7 @@ export interface CreateUserRequest {
     email: string;
     password: string;
     role: string;
-    fullName: string;
+    fullName?: string;
     phoneNumber?: string;
     address?: string;
     dateOfBirth?: string;
@@ -73,7 +73,7 @@ export class UserService {
     }
 
     static async createUser(data: CreateUserRequest): Promise<User> {
-        const response = await api.post(this.baseUrl, data);
+        const response = await api.post("/Auth/register", data);
         return response.data;
     }
 

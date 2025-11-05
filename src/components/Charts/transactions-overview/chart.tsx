@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 type PropsType = {
     data: {
         transactions: { x: unknown; y: number }[];
-        placeholder: { x: unknown; y: number }[];
+        placeholder?: { x: unknown; y: number }[];
     };
 };
 
@@ -22,7 +22,8 @@ export function TransactionsOverviewChart({ data }: PropsType) {
         legend: {
             show: false,
         },
-        colors: ["#34D399", "#A3E635"],
+        // set main series color to gold
+        colors: ["#D4AF37"],
         chart: {
             height: 310,
             type: "area",
@@ -89,16 +90,7 @@ export function TransactionsOverviewChart({ data }: PropsType) {
         <div className="-ml-4 -mr-5 h-[310px]">
             <Chart
                 options={options}
-                series={[
-                    {
-                        name: "Transactions",
-                        data: data.transactions,
-                    },
-                    {
-                        name: "Placeholder",
-                        data: data.placeholder,
-                    },
-                ]}
+                series={[{ name: "Transactions", data: data.transactions }]}
                 type="area"
                 height={310}
             />

@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 type PropsType = {
   data: {
     sales: { x: string; y: number }[];
-    revenue: { x: string; y: number }[];
   };
 };
 
@@ -16,7 +15,8 @@ const Chart = dynamic(() => import("react-apexcharts"), {
 
 export function WeeksProfitChart({ data }: PropsType) {
   const options: ApexOptions = {
-    colors: ["#5750F1", "#0ABEF9"],
+    // Use gold color for main series
+    colors: ["#5750F1"],
     chart: {
       type: "bar",
       stacked: true,
@@ -95,16 +95,7 @@ export function WeeksProfitChart({ data }: PropsType) {
     <div className="-ml-3.5 mt-3">
       <Chart
         options={options}
-        series={[
-          {
-            name: "Reviews",
-            data: data.sales,
-          },
-          {
-            name: "Revenue",
-            data: data.revenue,
-          },
-        ]}
+        series={[{ name: "Reviews", data: data.sales }]}
         type="bar"
         height={370}
       />

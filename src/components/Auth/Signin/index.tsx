@@ -18,6 +18,11 @@ export default function Signin() {
       <div>
         <SigninWithPassword />
       </div>
+      <div className="mt-4 text-center">
+        <Link href="/auth/verify" className="inline-block text-sm text-primary hover:underline">
+          Verify email
+        </Link>
+      </div>
       <div className="my-6 flex items-center justify-center">
         <span className="block h-px w-full bg-stroke dark:bg-dark-3"></span>
         <div className="block w-full min-w-fit bg-white px-3 text-center font-medium dark:bg-gray-dark">
@@ -26,7 +31,6 @@ export default function Signin() {
         <span className="block h-px w-full bg-stroke dark:bg-dark-3"></span>
       </div>
       <GoogleSigninButton text="Sign in" />
-
     </>
   );
 }

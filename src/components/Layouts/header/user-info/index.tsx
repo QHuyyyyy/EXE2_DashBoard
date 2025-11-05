@@ -26,6 +26,7 @@ export function UserInfo() {
     isEmailVerified: user?.isEmailVerified || false,
   };
 
+
   return (
     <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}>
       <DropdownTrigger className="rounded align-middle outline-none ring-primary ring-offset-2 focus-visible:ring-1 dark:ring-offset-gray-dark">
@@ -64,6 +65,8 @@ export function UserInfo() {
             />
           </figcaption>
         </figure>
+
+        {/* Quick verify action (if not verified) */}
       </DropdownTrigger>
 
       <DropdownContent

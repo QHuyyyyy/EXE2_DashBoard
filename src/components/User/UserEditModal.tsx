@@ -22,11 +22,7 @@ export function UserEditModal({ user, isOpen, onClose, onSuccess }: UserEditModa
                 email: user.email,
                 role: user.role,
                 fullName: user.fullName,
-                phoneNumber: user.phoneNumber || '',
-                address: user.address || '',
-                dateOfBirth: user.dateOfBirth || '',
-                status: user.status,
-                isEmailVerified: user.isEmailVerified,
+                bio: (user as any).bio || '',
             });
         }
     }, [user]);
@@ -50,8 +46,8 @@ export function UserEditModal({ user, isOpen, onClose, onSuccess }: UserEditModa
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, type } = e.target;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value, type } = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
@@ -138,30 +134,18 @@ export function UserEditModal({ user, isOpen, onClose, onSuccess }: UserEditModa
                                 />
                             </div>
 
+                            {/* Phone number intentionally removed per design */}
                             <div>
                                 <label className="mb-2.5 block text-black dark:text-white">
-                                    Phone Number
+                                    Bio
                                 </label>
-                                <input
-                                    type="tel"
-                                    name="phoneNumber"
-                                    value={formData.phoneNumber || ''}
+                                <textarea
+                                    name="bio"
+                                    value={(formData as any).bio || ''}
                                     onChange={handleChange}
-                                    placeholder="Enter phone number"
-                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="mb-2.5 block text-black dark:text-white">
-                                    Date of Birth
-                                </label>
-                                <input
-                                    type="date"
-                                    name="dateOfBirth"
-                                    value={formData.dateOfBirth || ''}
-                                    onChange={handleChange}
-                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                    placeholder="Short bio"
+                                    rows={4}
+                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary resize-none"
                                 />
                             </div>
                         </div>
@@ -184,59 +168,11 @@ export function UserEditModal({ user, isOpen, onClose, onSuccess }: UserEditModa
                                     required
                                 >
                                     <option value="">Select role</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="manager">Manager</option>
-                                    <option value="user">User</option>
-                                    <option value="tenant">Tenant</option>
-                                    <option value="landlord">Landlord</option>
+                                    <option value="admin">admin</option>
+                                    <option value="manager">manager</option>
+                                    <option value="lander">lander</option>
+                                    <option value="user">user</option>
                                 </select>
-                            </div>
-
-                            <div>
-                                <label className="mb-2.5 block text-black dark:text-white">
-                                    Status <span className="text-meta-1">*</span>
-                                </label>
-                                <select
-                                    name="status"
-                                    value={formData.status || ''}
-                                    onChange={handleChange}
-                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                                    required
-                                >
-                                    <option value="">Select status</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="suspended">Suspended</option>
-                                    <option value="pending">Pending</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="mb-2.5 block text-black dark:text-white">
-                                    Address
-                                </label>
-                                <input
-                                    type="text"
-                                    name="address"
-                                    value={formData.address || ''}
-                                    onChange={handleChange}
-                                    placeholder="Enter address"
-                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                                />
-                            </div>
-
-                            <div className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id="isEmailVerified"
-                                    name="isEmailVerified"
-                                    checked={formData.isEmailVerified || false}
-                                    onChange={handleChange}
-                                    className="mr-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                />
-                                <label htmlFor="isEmailVerified" className="text-black dark:text-white">
-                                    Email Verified
-                                </label>
                             </div>
                         </div>
                     </div>

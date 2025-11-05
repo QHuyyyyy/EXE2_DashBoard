@@ -5,6 +5,7 @@ import { UserService, User, UsersResponse, UsersQueryParams } from "@/services/u
 import { DataTable, TableColumn, PaginationInfo } from "@/components/ui/DataTable";
 import { UserDetailModal } from "../../components/User/UserDetailModal";
 import { UserEditModal } from "../../components/User/UserEditModal";
+import UserCreateModal from "./UserCreateModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 export default function UserManagementPage() {
@@ -13,6 +14,7 @@ export default function UserManagementPage() {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -194,16 +196,6 @@ export default function UserManagementPage() {
             )
         },
         {
-            key: "status",
-            title: "Status",
-            width: "min-w-[120px]",
-            render: (value) => (
-                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(value)}`}>
-                    {value || 'Unknown'}
-                </span>
-            )
-        },
-        {
             key: "createdAt",
             title: "Created Date",
             width: "min-w-[120px]",
@@ -317,7 +309,7 @@ export default function UserManagementPage() {
                 pagination={paginationInfo}
                 onPageChange={handlePageChange}
                 actions={
-                    <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
+                    <button onClick={() => setIsCreateModalOpen(true)} className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
                         Add New User
                     </button>
                 }
@@ -336,6 +328,12 @@ export default function UserManagementPage() {
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSuccess={handleEditSuccess}
+            />
+
+            <UserCreateModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreated={() => fetchUsers({ page: paginationInfo.currentPage })}
             />
 
             {/* Delete Confirmation Modal */}
