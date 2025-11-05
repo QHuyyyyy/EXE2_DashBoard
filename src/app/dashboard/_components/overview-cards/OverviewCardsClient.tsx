@@ -33,7 +33,7 @@ export default function OverviewCardsClient() {
                 // Extract known shapes
                 const rev = revRes?.data?.total ?? revRes?.data ?? 0;
                 const subs = subRes?.data?.total ?? subRes?.data ?? 0;
-                const tx = txRes?.data?.total ?? txRes?.data ?? 0;
+                const tx = txRes?.data?.completed ?? txRes?.data ?? 0;
                 const revw = revwRes?.data?.total ?? revwRes?.data ?? 0;
                 const us = userRes?.data?.total ?? userRes?.data ?? 0;
 

@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { SubdivisionService, Subdivision, SubdivisionsResponse, SubdivisionsQueryParams } from "@/services/subdivision.service";
 import { DataTable, TableColumn, PaginationInfo } from "@/components/ui/DataTable";
-import { SubdivisionDetailModal } from "../../components/Subdivision/SubdivisionDetailModal";
-import { SubdivisionEditModal } from "../../components/Subdivision/SubdivisionEditModal";
+import { SubdivisionDetailModal } from "./SubdivisionDetailModal";
+import { SubdivisionEditModal } from "./SubdivisionEditModal";
+import { SubdivisionCreateModal } from "./SubdivisionCreateModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 export default function SubdivisionManagementPage() {
@@ -12,6 +13,7 @@ export default function SubdivisionManagementPage() {
     const [selectedSubdivision, setSelectedSubdivision] = useState<Subdivision | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [subdivisionToDelete, setSubdivisionToDelete] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
@@ -268,7 +270,10 @@ export default function SubdivisionManagementPage() {
                 pagination={paginationInfo}
                 onPageChange={handlePageChange}
                 actions={
-                    <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90">
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90"
+                    >
                         Add New Subdivision
                     </button>
                 }
@@ -287,6 +292,16 @@ export default function SubdivisionManagementPage() {
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSuccess={handleEditSuccess}
+            />
+
+            {/* Subdivision Create Modal */}
+            <SubdivisionCreateModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSuccess={() => {
+                    setIsCreateModalOpen(false);
+                    fetchSubdivisions({ page: paginationInfo.currentPage });
+                }}
             />
 
             {/* Delete Confirmation Modal */}
