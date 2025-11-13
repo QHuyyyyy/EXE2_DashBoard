@@ -7,14 +7,15 @@ type PropsType = {
   data: {
     sales: { x: string; y: number }[];
   };
+  onBarClick?: (rawValue: string) => void;
 };
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export function WeeksProfitChart({ data }: PropsType) {
-  const options: ApexOptions = {
+export function WeeksProfitChart({ data, onBarClick }: PropsType) {
+  const options: ApexOptions & { _onBarClick?: (v: string) => void } = {
     // Use gold color for main series
     colors: ["#5750F1"],
     chart: {
@@ -22,6 +23,23 @@ export function WeeksProfitChart({ data }: PropsType) {
       stacked: true,
       toolbar: {
         show: false,
+      },
+      events: {
+        dataPointSelection: function (event, chartContext, config) {
+          try {
+            const idx = config.dataPointIndex;
+            const seriesIndex = config.seriesIndex;
+            const series = chartContext?.w?.config?.series ?? [];
+            const seriesData = series?.[seriesIndex]?.data ?? [];
+            const item = seriesData?.[idx];
+            const raw = item && typeof item === "object" && item.raw ? item.raw : item && typeof item === "object" && item.x ? item.x : String(item);
+            // call handler if present on the chart instance
+            const handler = (chartContext?.w?.config as any)?._onBarClick as ((v: string) => void) | undefined;
+            if (handler) handler(raw);
+          } catch (e) {
+            // ignore
+          }
+        },
       },
       zoom: {
         enabled: false,
@@ -91,6 +109,8 @@ export function WeeksProfitChart({ data }: PropsType) {
       opacity: 1,
     },
   };
+  // store handler on options so chart events can access it via chartContext.w.config
+  (options as any)._onBarClick = onBarClick;
   return (
     <div className="-ml-3.5 mt-3">
       <Chart

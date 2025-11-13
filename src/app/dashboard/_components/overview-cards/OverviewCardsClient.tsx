@@ -9,12 +9,13 @@ import { OverviewCardsSkeleton } from "./skeleton";
 
 type Metric = { value: number; growthRate: number };
 
-export default function OverviewCardsClient() {
+export default function OverviewCardsClient({ onReviewsClick }: { onReviewsClick?: (params?: { year?: number; month?: number; date?: string }) => void } = {}) {
     const [loading, setLoading] = useState(true);
     const [revenue, setRevenue] = useState<Metric>({ value: 0, growthRate: 0 });
     const [subcriptions, setSubcriptions] = useState<Metric>({ value: 0, growthRate: 0 });
     const [transactions, setTransactions] = useState<Metric>({ value: 0, growthRate: 0 });
     const [reviews, setReviews] = useState<Metric>({ value: 0, growthRate: 0 });
+    const [reviewsAvg, setReviewsAvg] = useState<number | null>(null);
     const [users, setUsers] = useState<Metric>({ value: 0, growthRate: 0 });
 
     useEffect(() => {
@@ -35,6 +36,8 @@ export default function OverviewCardsClient() {
                 const subs = subRes?.data?.total ?? subRes?.data ?? 0;
                 const tx = txRes?.data?.completed ?? txRes?.data ?? 0;
                 const revw = revwRes?.data?.total ?? revwRes?.data ?? 0;
+                // Try to read an average rating if provided by the API
+                const avg = revwRes?.data?.averageRating ?? revwRes?.data?.avg ?? revwRes?.data?.average ?? revwRes?.data?.rating?.average ?? null;
                 const us = userRes?.data?.total ?? userRes?.data ?? 0;
 
                 console.log("OverviewCardsClient fetched", { rev, subs, tx, revw, us });
@@ -46,6 +49,7 @@ export default function OverviewCardsClient() {
                 setTransactions({ value: Number(tx) || 0, growthRate: 0 });
                 setReviews({ value: Number(revw) || 0, growthRate: 0 });
                 setUsers({ value: Number(us) || 0, growthRate: 0 });
+                setReviewsAvg(avg ? Number(avg) : null);
             } catch (err) {
                 console.error("OverviewCardsClient load error", err);
             } finally {
@@ -89,6 +93,18 @@ export default function OverviewCardsClient() {
                 data={{ ...reviews, value: compactFormat(reviews.value) }}
                 Icon={icons.Users}
                 showGrowth={false}
+                onClick={() => onReviewsClick?.()}
+                meta={reviewsAvg ? (
+                    <div className="flex items-center gap-2 text-yellow-500">
+                        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden className="flex-shrink-0">
+                            <path
+                                fill="currentColor"
+                                d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                            />
+                        </svg>
+                        <span className="font-medium text-sm text-gray-800">{reviewsAvg?.toFixed(1)}</span>
+                    </div>
+                ) : null}
             />
         </div>
     );

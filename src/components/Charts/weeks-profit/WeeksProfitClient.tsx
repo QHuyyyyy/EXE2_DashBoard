@@ -25,7 +25,7 @@ function normalizeDaily(data: any) {
         } catch (e) {
             label = String(raw);
         }
-        return { x: label, y: Number(d.reviews ?? d.daily ?? 0) };
+        return { x: label, y: Number(d.reviews ?? d.daily ?? 0), raw: raw };
     });
 }
 
@@ -33,16 +33,16 @@ function normalizeMonthly(data: any) {
     // Handle array, object with `monthly` array, or single-month object
     if (!data) return [];
     if (Array.isArray(data)) {
-        return data.map((d: any) => ({ x: d.monthName ?? (d.month && d.year ? `${d.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${d.year ?? ""}-${d.month ?? ""}`), y: Number(d.reviews ?? d.monthly ?? 0) }));
+        return data.map((d: any) => ({ x: d.monthName ?? (d.month && d.year ? `${d.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${d.year ?? ""}-${d.month ?? ""}`), y: Number(d.reviews ?? d.monthly ?? 0), raw: d.monthName ?? (d.month && d.year ? `${d.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${d.year ?? ""}-${d.month ?? ""}`) }));
     }
     if (Array.isArray(data.monthly)) {
-        return data.monthly.map((d: any) => ({ x: d.monthName ?? (d.month && data.year ? `${data.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${data.year ?? ""}-${d.month ?? ""}`), y: Number(d.reviews ?? d.monthly ?? 0) }));
+        return data.monthly.map((d: any) => ({ x: d.monthName ?? (d.month && data.year ? `${data.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${data.year ?? ""}-${d.month ?? ""}`), y: Number(d.reviews ?? d.monthly ?? 0), raw: d.monthName ?? (d.month && data.year ? `${data.year}-${String(d.month).padStart(2, "0")}` : d.label ?? `${data.year ?? ""}-${d.month ?? ""}`) }));
     }
-    if (data && data.month && data.year) return [{ x: data.monthName ?? `${data.year}-${String(data.month).padStart(2, "0")}`, y: Number(data.reviews ?? data.monthly ?? 0) }];
+    if (data && data.month && data.year) return [{ x: data.monthName ?? `${data.year}-${String(data.month).padStart(2, "0")}`, y: Number(data.reviews ?? data.monthly ?? 0), raw: data.monthName ?? `${data.year}-${String(data.month).padStart(2, "0")}` }];
     return [];
 }
 
-export default function WeeksProfitClient({ timeFrame, className }: PropsType) {
+export default function WeeksProfitClient({ timeFrame, className, onDateClick }: PropsType & { onDateClick?: (date: string) => void }) {
     const [loading, setLoading] = useState(true);
     const [sales, setSales] = useState<{ x: string; y: number }[]>([]);
     const [revenue, setRevenue] = useState<{ x: string; y: number }[]>([]);
@@ -154,7 +154,7 @@ export default function WeeksProfitClient({ timeFrame, className }: PropsType) {
                 </div>
             </div>
 
-            <WeeksProfitChart data={{ sales }} />
+            <WeeksProfitChart data={{ sales }} onBarClick={(raw) => onDateClick?.(raw)} />
         </div>
     );
 }
