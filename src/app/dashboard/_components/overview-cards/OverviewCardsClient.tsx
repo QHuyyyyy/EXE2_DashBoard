@@ -34,7 +34,7 @@ export default function OverviewCardsClient({ onReviewsClick }: { onReviewsClick
                 // Extract known shapes
                 const rev = revRes?.data?.total ?? revRes?.data ?? 0;
                 const subs = subRes?.data?.total ?? subRes?.data ?? 0;
-                const tx = txRes?.data?.completed ?? txRes?.data ?? 0;
+                const tx = txRes?.data?.total ?? txRes?.data ?? 0;
                 const revw = revwRes?.data?.total ?? revwRes?.data ?? 0;
                 // Try to read an average rating if provided by the API
                 const avg = revwRes?.data?.averageRating ?? revwRes?.data?.avg ?? revwRes?.data?.average ?? revwRes?.data?.rating?.average ?? null;
