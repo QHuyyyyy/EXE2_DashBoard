@@ -6,6 +6,7 @@ import { OverviewCard } from "./card";
 import * as icons from "./icons";
 import api from "@/services/api";
 import { OverviewCardsSkeleton } from "./skeleton";
+import RevenueDetailsModal from "@/components/Charts/payments-overview/RevenueDetailsModal";
 
 type Metric = { value: number; growthRate: number };
 
@@ -17,6 +18,12 @@ export default function OverviewCardsClient({ onReviewsClick }: { onReviewsClick
     const [reviews, setReviews] = useState<Metric>({ value: 0, growthRate: 0 });
     const [reviewsAvg, setReviewsAvg] = useState<number | null>(null);
     const [users, setUsers] = useState<Metric>({ value: 0, growthRate: 0 });
+    const [revenueOpen, setRevenueOpen] = useState(false);
+    const [revenueItems, setRevenueItems] = useState<Array<{ username?: string; totalAmount?: number; date?: string }>>([]);
+    const now = new Date();
+    const [revYear] = useState<number>(now.getFullYear());
+    const [revMonth] = useState<number>(now.getMonth() + 1);
+    const [revSubtitle, setRevSubtitle] = useState<string>("");
 
     useEffect(() => {
         let mounted = true;
@@ -63,6 +70,32 @@ export default function OverviewCardsClient({ onReviewsClick }: { onReviewsClick
         };
     }, []);
 
+    async function openRevenueModal() {
+        try {
+            // Prefer daily to preserve day per transaction
+            const res = await api.get("/Report/revenue/daily", { params: { year: revYear, month: revMonth } });
+            const data = res?.data;
+            let dailyArr: any[] = [];
+            if (Array.isArray(data?.daily)) dailyArr = data.daily;
+            else if (Array.isArray(data)) dailyArr = data;
+            else if (data?.date) dailyArr = [data];
+
+            const items = dailyArr.flatMap((d: any) => {
+                const day = d?.date ?? d?.day;
+                const details = Array.isArray(d?.details) ? d.details : [];
+                return details.map((it: any) => ({ username: it?.username, totalAmount: Number(it?.totalAmount ?? 0), date: day }));
+            });
+
+            const monthName = new Date(revYear, revMonth - 1, 1).toLocaleString("en-US", { month: "long" });
+            setRevSubtitle(`${monthName} ${revYear}`);
+            setRevenueItems(items);
+        } catch (e) {
+            setRevenueItems([]);
+        } finally {
+            setRevenueOpen(true);
+        }
+    }
+
     if (loading) return <OverviewCardsSkeleton />;
 
     return (
@@ -72,6 +105,7 @@ export default function OverviewCardsClient({ onReviewsClick }: { onReviewsClick
                 data={{ ...revenue, value: formatVND(revenue.value) }}
                 Icon={icons.Views}
                 showGrowth={false}
+                onClick={openRevenueModal}
             />
 
             <OverviewCard
@@ -105,6 +139,13 @@ export default function OverviewCardsClient({ onReviewsClick }: { onReviewsClick
                         <span className="font-medium text-sm text-gray-800">{reviewsAvg?.toFixed(1)}</span>
                     </div>
                 ) : null}
+            />
+            <RevenueDetailsModal
+                isOpen={revenueOpen}
+                onClose={() => setRevenueOpen(false)}
+                title="Revenue Details"
+                subtitle={revSubtitle}
+                items={revenueItems}
             />
         </div>
     );
