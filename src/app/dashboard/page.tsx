@@ -6,6 +6,7 @@ import DashboardInteractive from "./_components/DashboardInteractive";
 import { createTimeFrameExtractor } from "@/utils/timeframe-extractor";
 import { Suspense } from "react";
 import { OverviewCardsSkeleton } from "./_components/overview-cards/skeleton";
+import FullReviewsSection from "./_components/FullReviewsSection";
 
 type PropsType = {
   searchParams: Promise<{
@@ -41,6 +42,9 @@ export default async function Home({ searchParams }: PropsType) {
           key={extractTimeFrame("used_devices")}
           timeFrame={extractTimeFrame("used_devices")?.split(":")[1]}
         />
+
+        {/* Full reviews list */}
+        <FullReviewsSection />
         {/* Chats card removed */}
         {/* Top Users removed from dashboard */}
 

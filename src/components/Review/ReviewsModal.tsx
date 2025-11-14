@@ -104,78 +104,81 @@ export default function ReviewsModal({ isOpen, onClose, year, month, date }: Pro
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-            <div className="relative w-full max-w-4xl bg-white dark:bg-boxdark rounded-xl shadow-2xl overflow-hidden flex flex-col" style={{ maxHeight: '90vh' }}>
-                {/* Header */}
-                <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 border-b border-gray-200 dark:border-slate-600 px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{headerText}</h3>
-                        <button
-                            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded transition"
-                            onClick={onClose}
-                            aria-label="Close modal"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+        <div className="fixed inset-0 z-50 mt-20 flex items-center justify-center bg-opacity-40 p-4">
+            <div className="relative w-full max-w-4xl bg-white dark:bg-boxdark rounded-xl shadow-2xl overflow-hidden flex flex-col" style={{ maxHeight: '80vh' }}>
+                {/* Scroll Area: include header so sticky doesn't overlap */}
+                <div className="flex-1 overflow-auto">
+                    {/* Header */}
+                    <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 border-b border-gray-200 dark:border-slate-600 px-6 py-4">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{headerText}</h3>
+                            <button
+                                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded transition"
+                                onClick={onClose}
+                                aria-label="Close modal"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                {/* Content */}
-                <div className="flex-1 overflow-auto p-6">
-                    {loading && (
-                        <div className="flex items-center justify-center py-12">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
-                            <span className="ml-3 text-gray-600 dark:text-gray-400">Loading reviews...</span>
-                        </div>
-                    )}
+                    {/* Content */}
+                    <div className="p-6">
+                        {loading && (
+                            <div className="flex items-center justify-center py-12">
+                                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+                                <span className="ml-3 text-gray-600 dark:text-gray-400">Loading reviews...</span>
+                            </div>
+                        )}
 
-                    {error && (
-                        <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
-                            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                        </div>
-                    )}
+                        {error && (
+                            <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+                                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                            </div>
+                        )}
 
-                    {!loading && !error && data && (
-                        <div className="space-y-6">
-                            {/* Daily view */}
-                            {(data as DailyData).daily && Array.isArray((data as DailyData).daily) ? (
-                                (data as DailyData).daily.map((day: any) => (
-                                    <div key={day.date} className="space-y-4">
-                                        <div className="flex items-center gap-3 pb-3 border-b-2 border-gray-200 dark:border-slate-600">
-                                            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
-                                                </svg>
-                                                <span className="font-semibold text-lg">{day.date}</span>
+                        {!loading && !error && data && (
+                            <div className="space-y-6 ">
+                                {/* Daily view */}
+                                {(data as DailyData).daily && Array.isArray((data as DailyData).daily) ? (
+                                    (data as DailyData).daily.map((day: any) => (
+                                        <div key={day.date} className="space-y-4">
+                                            <div className="flex items-center gap-3 pb-3 border-b-2 border-gray-200 dark:border-slate-600">
+                                                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                                                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
+                                                    </svg>
+                                                    <span className="font-semibold text-lg">{day.date}</span>
+                                                </div>
                                             </div>
+                                            <PostsList posts={day.posts} expandedReviews={expandedReviews} onToggle={toggleReviewsExpanded} />
                                         </div>
-                                        <PostsList posts={day.posts} expandedReviews={expandedReviews} onToggle={toggleReviewsExpanded} />
-                                    </div>
-                                ))
-                            ) : (data as MonthlyData).monthly && Array.isArray((data as MonthlyData).monthly) ? (
-                                /* Monthly view */
-                                (data as MonthlyData).monthly.map((monthData: any) => (
-                                    <div key={monthData.month} className="space-y-4">
-                                        <div className="flex items-center gap-3 pb-3 border-b-2 border-gray-200 dark:border-slate-600">
-                                            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h.01a1 1 0 100-2H6zm4 0a1 1 0 000 2h.01a1 1 0 100-2h-.01zm4 0a1 1 0 000 2h.01a1 1 0 100-2h-.01zm2 5a1 1 0 100-2H4v6a2 2 0 002 2h12a2 2 0 002-2v-6h-2z" />
-                                                </svg>
-                                                <span className="font-semibold text-lg">{monthData.monthName} {(data as MonthlyData).year}</span>
+                                    ))
+                                ) : (data as MonthlyData).monthly && Array.isArray((data as MonthlyData).monthly) ? (
+                                    /* Monthly view */
+                                    (data as MonthlyData).monthly.map((monthData: any) => (
+                                        <div key={monthData.month} className="space-y-4">
+                                            <div className="flex items-center gap-3 pb-3 border-b-2 border-gray-200 dark:border-slate-600">
+                                                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                                                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h.01a1 1 0 100-2H6zm4 0a1 1 0 000 2h.01a1 1 0 100-2h-.01zm4 0a1 1 0 000 2h.01a1 1 0 100-2h-.01zm2 5a1 1 0 100-2H4v6a2 2 0 002 2h12a2 2 0 002-2v-6h-2z" />
+                                                    </svg>
+                                                    <span className="font-semibold text-lg">{monthData.monthName} {(data as MonthlyData).year}</span>
+                                                </div>
                                             </div>
+                                            <PostsList posts={monthData.posts} expandedReviews={expandedReviews} onToggle={toggleReviewsExpanded} />
                                         </div>
-                                        <PostsList posts={monthData.posts} expandedReviews={expandedReviews} onToggle={toggleReviewsExpanded} />
+                                    ))
+                                ) : (
+                                    <div className="rounded-lg bg-gray-50 dark:bg-slate-800 p-6 text-center">
+                                        <p className="text-gray-600 dark:text-gray-400">No data available for this period.</p>
                                     </div>
-                                ))
-                            ) : (
-                                <div className="rounded-lg bg-gray-50 dark:bg-slate-800 p-6 text-center">
-                                    <p className="text-gray-600 dark:text-gray-400">No data available for this period.</p>
-                                </div>
-                            )}
-                        </div>
-                    )}
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
