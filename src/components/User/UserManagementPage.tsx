@@ -7,6 +7,7 @@ import { UserDetailModal } from "../../components/User/UserDetailModal";
 import { UserEditModal } from "../../components/User/UserEditModal";
 import UserCreateModal from "./UserCreateModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import api from "@/services/api";
 
 export default function UserManagementPage() {
     const [users, setUsers] = useState<User[]>([]);
@@ -25,9 +26,26 @@ export default function UserManagementPage() {
         pageSize: 6
     });
 
+    // Totals from /Report/users/total
+    const [totals, setTotals] = useState<{ total: number; userRoleCount: number; landerRoleCount: number } | null>(null);
+
     // Fetch users from API when component mounts
     useEffect(() => {
         fetchUsers();
+        // fetch counts for header stats
+        (async () => {
+            try {
+                const res = await api.get("/Report/users/total");
+                const data = res?.data ?? {};
+                setTotals({
+                    total: Number(data.total ?? 0),
+                    userRoleCount: Number(data.userRoleCount ?? 0),
+                    landerRoleCount: Number(data.landerRoleCount ?? 0),
+                });
+            } catch (e) {
+                setTotals(null);
+            }
+        })();
     }, []);
 
     const fetchUsers = async (params?: UsersQueryParams) => {
@@ -298,6 +316,22 @@ export default function UserManagementPage() {
 
     return (
         <>
+            {/* Header stats row */}
+            <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="rounded-[10px] bg-white p-4 shadow-1 dark:bg-gray-dark">
+                    <p className="text-sm text-dark-6">Total Users</p>
+                    <p className="mt-1 text-xl font-bold text-dark dark:text-white">{totals?.total ?? "–"}</p>
+                </div>
+                <div className="rounded-[10px] bg-white p-4 shadow-1 dark:bg-gray-dark">
+                    <p className="text-sm text-dark-6">User Role Count</p>
+                    <p className="mt-1 text-xl font-bold text-dark dark:text-white">{totals?.userRoleCount ?? "–"}</p>
+                </div>
+                <div className="rounded-[10px] bg-white p-4 shadow-1 dark:bg-gray-dark">
+                    <p className="text-sm text-dark-6">Lander Role Count</p>
+                    <p className="mt-1 text-xl font-bold text-dark dark:text-white">{totals?.landerRoleCount ?? "–"}</p>
+                </div>
+            </div>
+
             <DataTable
                 columns={columns}
                 data={users}
